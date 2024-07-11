@@ -1,18 +1,13 @@
 package main
 
 import (
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"api-gateway/api"
+	"api-gateway/config"
 )
 
-func Connect(port string) (*grpc.ClientConn, error) {
-	conn, err := grpc.NewClient(port, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		return nil, err
-	}
-	return conn, nil
-}
-
 func main() {
+	cfg := config.Load()
 
+	router := api.NewRouter(cfg)
+	router.Run(cfg.HTTP_PORT)
 }

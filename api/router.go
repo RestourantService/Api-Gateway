@@ -2,46 +2,59 @@ package api
 
 import (
 	"api-gateway/api/handler"
-	"fmt"
-	"strings"
+	"api-gateway/config"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
 )
 
-var jwtKey = []byte("secret-key")
+func NewRouter(cfg *config.Config) *gin.Engine {
+	r := gin.Default()
+	api := r.Group("/reservation-system")
+	h := handler.NewHandler(cfg)
 
-func New(server *handler.Server) *gin.Engine {
-	router := gin.Default()
-	router.Use(gin.Logger())
-	router.Use(gin.Recovery())
-
-	return router
-}
-
-func VerifyJWTMiddleware(ctx *gin.Context) {
-	tokenStr := ctx.GetHeader("Authorization")
-
-	if !strings.HasPrefix(tokenStr, "Bearer ") {
-		ctx.IndentedJSON(401, gin.H{"error": "unauthorized"})
-		ctx.Abort()
-		return
+	u := api.Group("/users")
+	{
+		u.GET("/:user_id", h.GetUser)
+		u.PUT("/:user_id", h.UpdateUser)
+		u.DELETE("/:user_id", h.DeleteUser)
 	}
 
-	tokenStr = strings.TrimPrefix(tokenStr, "Bearer ")
-
-	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-		return jwtKey, nil
-	})
-
-	if err != nil || !token.Valid {
-		ctx.IndentedJSON(401, gin.H{"error": "invalid token"})
-		ctx.Abort()
-		return
+	rest := api.Group("/restaurants")
+	{
+		rest.POST("", h.CreateRestaurant)
+		rest.GET("/:restaurant_id", h.GetRestaurantByID)
+		rest.PUT("/:restaurant_id", h.UpdateRestaurant)
+		rest.DELETE("/:restaurant_id", h.DeleteRestaurant)
+		rest.GET("", h.FetchRestaurants)
 	}
 
-	ctx.Next()
+	reser := api.Group("reservations")
+	{
+		reser.POST("", h.CreateReservation)
+		reser.GET("/:reservation_id", h.GetReservationByID)
+		reser.PUT("/:reservation_id", h.UpdateReservation)
+		reser.DELETE("/:reservation_id", h.DeleteReservation)
+		reser.GET("/:reservation_id/check", h.ValidateReservation)
+		reser.POST("/:reservation_id/order", h.Order)
+		reser.POST("/:reservation_id/payment", h.Pay)
+		reser.GET("", h.FetchReservations)
+	}
+
+	m := api.Group("menu")
+	{
+		m.POST("", h.AddMeal)
+		m.GET("/:meal_id", h.GetMealByID)
+		m.PUT("/:meal_id", h.UpdateMeal)
+		m.DELETE("/:meal_id", h.DeleteMeal)
+		m.GET("", h.FetchMeals)
+	}
+
+	p := api.Group("payments")
+	{
+		p.POST("", h.CreatePayment)
+		p.GET("/:payment_id", h.GetPayment)
+		p.PUT("/:payment_id", h.UpdatePayment)
+	}
+
+	return r
 }

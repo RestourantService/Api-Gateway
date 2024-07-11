@@ -1,19 +1,29 @@
 package handler
 
 import (
-	"google.golang.org/grpc"
+	"api-gateway/config"
+	"api-gateway/genproto/menu"
+	"api-gateway/genproto/payment"
+	"api-gateway/genproto/reservation"
+	"api-gateway/genproto/restaurant"
+	"api-gateway/genproto/user"
+	"api-gateway/pkg"
 )
 
-type Server struct {
-	Usermanagement      *grpc.ClientConn
-	Gargardenmanagement *grpc.ClientConn
-	Sustainability      *grpc.ClientConn
-	Community           *grpc.ClientConn
+type Handler struct {
+	UserClient        user.UserClient
+	RestaurantClient  restaurant.RestaurantClient
+	ReservationClient reservation.ReservationClient
+	MenuClient        menu.MenuClient
+	PaymentClient     payment.PaymentClient
 }
 
-type HandlerConfig struct {
-}
-
-func NewHandlerConfig(conn *Server) *HandlerConfig {
-	return &HandlerConfig{}
+func NewHandler(cfg *config.Config) *Handler {
+	return &Handler{
+		UserClient:        pkg.NewUserClient(cfg),
+		RestaurantClient:  pkg.NewRestaurantClient(cfg),
+		ReservationClient: pkg.NewReservationClient(cfg),
+		MenuClient:        pkg.NewMenuClient(cfg),
+		PaymentClient:     pkg.NewPaymentClient(cfg),
+	}
 }
