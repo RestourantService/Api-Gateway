@@ -91,5 +91,5 @@ func (h *Handler) UpdatePayment(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusNoContent, "Payment updated successfully")
+	c.JSON(http.StatusOK, "Payment updated successfully")
 }

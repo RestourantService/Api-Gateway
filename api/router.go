@@ -4,11 +4,23 @@ import (
 	"api-gateway/api/handler"
 	"api-gateway/config"
 
+	_ "api-gateway/api/docs"
+
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @title API Gateway
+// @version 1.0
+// @description API Gateway of Restaurant Reservation System
+// @host localhost:8080
+// BasePath: /
 func NewRouter(cfg *config.Config) *gin.Engine {
 	r := gin.Default()
+
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	api := r.Group("/reservation-system")
 	h := handler.NewHandler(cfg)
 

@@ -92,7 +92,7 @@ func (h *Handler) UpdateReservation(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusNoContent, "Reservation updated successfully")
+	c.JSON(http.StatusOK, "Reservation updated successfully")
 }
 
 func (h *Handler) DeleteReservation(c *gin.Context) {
@@ -116,7 +116,7 @@ func (h *Handler) DeleteReservation(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusNoContent, "Reservation deleted successfully")
+	c.JSON(http.StatusOK, "Reservation deleted successfully")
 }
 
 func (h *Handler) ValidateReservation(c *gin.Context) {

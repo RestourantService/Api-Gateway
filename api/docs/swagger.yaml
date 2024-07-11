@@ -1,0 +1,87 @@
+definitions:
+  user.UserInfo:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API Gateway of Restaurant Reservation System
+  title: API Gateway
+  version: "1.0"
+paths:
+  /:user_id:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a user from users table in PostgreSQL
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Invalid user ID
+          schema:
+            type: string
+        "500":
+          description: Server error deleting user
+          schema:
+            type: string
+      summary: Deletes a user
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a user from users table in PostgreSQL
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.UserInfo'
+        "400":
+          description: Invalid user ID
+          schema:
+            type: string
+        "500":
+          description: Server error getting user
+          schema:
+            type: string
+      summary: Gets a user
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: Updates a user in users table in PostgreSQL
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Invalid user ID
+          schema:
+            type: string
+        "500":
+          description: Server error updating user
+          schema:
+            type: string
+      summary: Updates a user
+      tags:
+      - user
+swagger: "2.0"
