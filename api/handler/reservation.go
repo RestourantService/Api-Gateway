@@ -17,7 +17,7 @@ import (
 // @Summary Creates a reservation
 // @Description Inserts new reservation info to reservations table in PostgreSQL
 // @Tags reservation
-// @Param new_data body reservation.ReservationDetails true "New data"
+// @Param new_data body reservation.ReservationInsert true "New data"
 // @Success 200 {object} reservation.ID
 // @Failure 400 {object} string "Invalid data"
 // @Failure 500 {object} string "Server error while creating reservation"
