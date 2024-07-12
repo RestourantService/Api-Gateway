@@ -30,6 +30,7 @@ type ReservationClient interface {
 	Order(ctx context.Context, in *ReservationOrders, opts ...grpc.CallOption) (*ID, error)
 	Pay(ctx context.Context, in *ID, opts ...grpc.CallOption) (*Status, error)
 	FetchReservations(ctx context.Context, in *Filter, opts ...grpc.CallOption) (*Reservations, error)
+	DeleteReservationByUserID(ctx context.Context, in *ID, opts ...grpc.CallOption) (*Status, error)
 }
 
 type reservationClient struct {
@@ -112,6 +113,15 @@ func (c *reservationClient) FetchReservations(ctx context.Context, in *Filter, o
 	return out, nil
 }
 
+func (c *reservationClient) DeleteReservationByUserID(ctx context.Context, in *ID, opts ...grpc.CallOption) (*Status, error) {
+	out := new(Status)
+	err := c.cc.Invoke(ctx, "/reservation.Reservation/DeleteReservationByUserID", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ReservationServer is the server API for Reservation service.
 // All implementations must embed UnimplementedReservationServer
 // for forward compatibility
@@ -124,6 +134,7 @@ type ReservationServer interface {
 	Order(context.Context, *ReservationOrders) (*ID, error)
 	Pay(context.Context, *ID) (*Status, error)
 	FetchReservations(context.Context, *Filter) (*Reservations, error)
+	DeleteReservationByUserID(context.Context, *ID) (*Status, error)
 	mustEmbedUnimplementedReservationServer()
 }
 
@@ -154,6 +165,9 @@ func (UnimplementedReservationServer) Pay(context.Context, *ID) (*Status, error)
 }
 func (UnimplementedReservationServer) FetchReservations(context.Context, *Filter) (*Reservations, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FetchReservations not implemented")
+}
+func (UnimplementedReservationServer) DeleteReservationByUserID(context.Context, *ID) (*Status, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteReservationByUserID not implemented")
 }
 func (UnimplementedReservationServer) mustEmbedUnimplementedReservationServer() {}
 
@@ -312,6 +326,24 @@ func _Reservation_FetchReservations_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Reservation_DeleteReservationByUserID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReservationServer).DeleteReservationByUserID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/reservation.Reservation/DeleteReservationByUserID",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReservationServer).DeleteReservationByUserID(ctx, req.(*ID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Reservation_ServiceDesc is the grpc.ServiceDesc for Reservation service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -350,6 +382,10 @@ var Reservation_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FetchReservations",
 			Handler:    _Reservation_FetchReservations_Handler,
+		},
+		{
+			MethodName: "DeleteReservationByUserID",
+			Handler:    _Reservation_DeleteReservationByUserID_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -330,7 +330,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/payment.PaymentInfo"
+                            "$ref": "#/definitions/payment.PaymentInsert"
                         }
                     }
                 ],
@@ -1122,6 +1122,23 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "payment_method": {
+                    "type": "string"
+                },
+                "payment_status": {
+                    "type": "string"
+                },
+                "reservation_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "payment.PaymentInsert": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
                 },
                 "payment_method": {
                     "type": "string"

@@ -85,7 +85,7 @@ func (h *Handler) GetPayment(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param payment_id path string true "Payment ID"
-// @Param new_info body payment.PaymentInfo true "New info"
+// @Param new_info body payment.PaymentInsert true "New info"
 // @Success 200 {object} string
 // @Failure 400 {object} string "Invalid payment ID or data"
 // @Failure 500 {object} string "Server error while updating payment"
