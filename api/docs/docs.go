@@ -423,7 +423,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/reservation.ReservationInsert"
+                            "$ref": "#/definitions/reservation.ReservationDetails"
                         }
                     }
                 ],
@@ -512,7 +512,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/reservation.ReservationDetails"
+                            "$ref": "#/definitions/reservation.ReservationInsert"
                         }
                     }
                 ],

@@ -17,7 +17,7 @@ import (
 // @Summary Creates a reservation
 // @Description Inserts new reservation info to reservations table in PostgreSQL
 // @Tags reservation
-// @Param new_data body reservation.ReservationInsert true "New data"
+// @Param new_data body reservation.ReservationDetails true "New data"
 // @Success 200 {object} reservation.ID
 // @Failure 400 {object} string "Invalid data"
 // @Failure 500 {object} string "Server error while creating reservation"
@@ -100,7 +100,7 @@ func (h *Handler) GetReservationByID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param reservation_id path string true "Reservation ID"
-// @Param new_info body reservation.ReservationDetails true "New info"
+// @Param new_info body reservation.ReservationInsert true "New info"
 // @Success 200 {object} string
 // @Failure 400 {object} string "Invalid reservation ID or data"
 // @Failure 500 {object} string "Server error while updating reservation"
