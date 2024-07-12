@@ -23,12 +23,16 @@ import (
 // @Failure 500 {object} string "Server error while creating restaurant"
 // @Router /reservation-system/restaurants [post]
 func (h *Handler) CreateRestaurant(c *gin.Context) {
+	h.Logger.Info("CreateRestaurant method is starting")
+
 	var rest pb.RestaurantDetails
 	err := c.ShouldBind(&rest)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid data").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to data")
+		h.Logger.Error(err.Error())
 		return
 	}
 
@@ -39,10 +43,13 @@ func (h *Handler) CreateRestaurant(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error creating restaurant").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to CreateRestaurant").Error()
+		h.Logger.Error(err)
 		return
 	}
 
+	h.Logger.Info("CreateRestaurant has successfully finished")
 	c.JSON(http.StatusCreated, gin.H{"New restaurant id": id.Id})
 }
 
@@ -56,12 +63,16 @@ func (h *Handler) CreateRestaurant(c *gin.Context) {
 // @Failure 500 {object} string "Server error while getting restaurant"
 // @Router /reservation-system/restaurants/{restaurant_id} [get]
 func (h *Handler) GetRestaurantByID(c *gin.Context) {
+	h.Logger.Info("GetRestaurantByID method is starting")
+
 	id := c.Param("restaurant_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid restaurant id").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to data").Error()
+		h.Logger.Error(err)
 		return
 	}
 
@@ -72,10 +83,13 @@ func (h *Handler) GetRestaurantByID(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error getting restaurant").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to GetRestaurantByID").Error()
+		h.Logger.Error(err)
 		return
 	}
 
+	h.Logger.Info("GetRestaurantByID has successfully finished")
 	c.JSON(http.StatusOK, gin.H{"Restaurant": rest})
 }
 
@@ -92,12 +106,16 @@ func (h *Handler) GetRestaurantByID(c *gin.Context) {
 // @Failure 500 {object} string "Server error while updating restaurant"
 // @Router /reservation-system/restaurants/{restaurant_id} [put]
 func (h *Handler) UpdateRestaurant(c *gin.Context) {
+	h.Logger.Info("UpdateRestaurant method is starting")
+
 	id := c.Param("restaurant_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid restaurant id").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to data").Error()
+		h.Logger.Error(err)
 		return
 	}
 
@@ -106,7 +124,9 @@ func (h *Handler) UpdateRestaurant(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid data").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to data").Error()
+		h.Logger.Error(err)
 		return
 	}
 	rest.Id = id
@@ -118,10 +138,13 @@ func (h *Handler) UpdateRestaurant(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error updating restaurant").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to UpdateRestaurant").Error()
+		h.Logger.Error(err)
 		return
 	}
 
+	h.Logger.Info("UpdateRestaurant has successfully finished")
 	c.JSON(http.StatusNoContent, "Restaurant updated successfully")
 }
 
@@ -135,12 +158,16 @@ func (h *Handler) UpdateRestaurant(c *gin.Context) {
 // @Failure 500 {object} string "Server error while deleting restaurant"
 // @Router /reservation-system/restaurants/{restaurant_id} [delete]
 func (h *Handler) DeleteRestaurant(c *gin.Context) {
+	h.Logger.Info("DeleteRestaurant method is starting")
+
 	id := c.Param("restaurant_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid restaurant id").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to data").Error()
+		h.Logger.Error(err)
 		return
 	}
 
@@ -151,10 +178,13 @@ func (h *Handler) DeleteRestaurant(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error deleting restaurant").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to DeleteRestaurant").Error()
+		h.Logger.Error(err)
 		return
 	}
 
+	h.Logger.Info("DeleteRestaurant has successfully finished")
 	c.JSON(http.StatusNoContent, "Restaurant deleted successfully")
 }
 
@@ -169,6 +199,8 @@ func (h *Handler) DeleteRestaurant(c *gin.Context) {
 // @Failure 500 {object} string "Server error while fetching restaurants"
 // @Router /reservation-system/restaurants [get]
 func (h *Handler) FetchRestaurants(c *gin.Context) {
+	h.Logger.Info("FetchRestaurants method is starting")
+	
 	limit, err := strconv.Atoi(c.Query("limit"))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
@@ -194,9 +226,12 @@ func (h *Handler) FetchRestaurants(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error fetching restaurants").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to FetchRestaurants").Error()
+		h.Logger.Error(err)
 		return
 	}
 
+	h.Logger.Info("FetchRestaurants has successfully finished")
 	c.JSON(http.StatusOK, gin.H{"Restaurants": rests})
 }

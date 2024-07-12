@@ -22,12 +22,17 @@ import (
 // @Failure 500 {object} string "Server error while getting user"
 // @Router /reservation-system/users/{user_id} [get]
 func (h *Handler) GetUser(c *gin.Context) {
+	h.Logger.Info("GetUser method is starting")
+	
 	id := c.Param("user_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid user id").Error()})
+
 		log.Println(err)
+		err := errors.Wrap(err, "failed to data").Error()
+		h.Logger.Error(err)
 		return
 	}
 
@@ -38,10 +43,14 @@ func (h *Handler) GetUser(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error getting user").Error()})
+
 		log.Println(err)
+		err := errors.Wrap(err, "failed to GetUser").Error()
+		h.Logger.Error(err)
 		return
 	}
 
+	h.Logger.Info("GetUser has successfully finished")
 	c.JSON(http.StatusOK, gin.H{"User": user})
 }
 
@@ -58,12 +67,17 @@ func (h *Handler) GetUser(c *gin.Context) {
 // @Failure 500 {object} string "Server error while updating user"
 // @Router /reservation-system/users/{user_id} [put]
 func (h *Handler) UpdateUser(c *gin.Context) {
+	h.Logger.Info("UpdateUser method is starting")
+
 	id := c.Param("user_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid user id").Error()})
+
 		log.Println(err)
+		err := errors.Wrap(err, "failed to data").Error()
+		h.Logger.Error(err)
 		return
 	}
 
@@ -72,7 +86,10 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid data").Error()})
+
 		log.Println(err)
+		err := errors.Wrap(err, "failed to data").Error()
+		h.Logger.Error(err)
 		return
 	}
 
@@ -83,10 +100,14 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error updating user").Error()})
+
 		log.Println(err)
+		err := errors.Wrap(err, "failed to UpdateUser").Error()
+		h.Logger.Error(err)
 		return
 	}
 
+	h.Logger.Info("UpdateUser has successfully finished")
 	c.JSON(http.StatusOK, "User updated successfully")
 }
 
@@ -100,12 +121,16 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 // @Failure 500 {object} string "Server error while deleting user"
 // @Router /reservation-system/users/{user_id} [delete]
 func (h *Handler) DeleteUser(c *gin.Context) {
+	h.Logger.Info("DeleteUser method is starting")
 	id := c.Param("user_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid user id").Error()})
+
 		log.Println(err)
+		err := errors.Wrap(err, "failed to data").Error()
+		h.Logger.Error(err)
 		return
 	}
 
@@ -116,9 +141,13 @@ func (h *Handler) DeleteUser(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error deleting user").Error()})
+
 		log.Println(err)
+		err := errors.Wrap(err, "failed to DeleteUser").Error()
+		h.Logger.Error(err)
 		return
 	}
 
+	h.Logger.Info("DeleteUser has successfully finished")
 	c.JSON(http.StatusOK, "User deleted successfully")
 }
