@@ -258,6 +258,7 @@ func (h *Handler) Order(c *gin.Context) {
 		h.Logger.Error(err)
 		return
 	}
+	order.Id = id
 
 	ctx, cancel := context.WithTimeout(c, time.Second*5)
 	defer cancel()
