@@ -1,4 +1,13 @@
 definitions:
+  authentication.UserDetails:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
   menu.ID:
     properties:
       id:
@@ -168,7 +177,7 @@ host: localhost:8080
 info:
   contact: {}
   description: API Gateway of Restaurant Reservation System
-  title: API Gateway
+  title: Restaurant Reservation System
   version: "1.0"
 paths:
   /reservation-system/{reservation_id}/check:
@@ -822,7 +831,7 @@ paths:
         name: new_info
         required: true
         schema:
-          $ref: '#/definitions/user.UserInfo'
+          $ref: '#/definitions/authentication.UserDetails'
       produces:
       - application/json
       responses:

@@ -843,7 +843,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user.UserInfo"
+                            "$ref": "#/definitions/authentication.UserDetails"
                         }
                     }
                 ],
@@ -1030,6 +1030,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "authentication.UserDetails": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "menu.ID": {
             "type": "object",
             "properties": {
@@ -1296,7 +1310,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "API Gateway",
+	Title:            "Restaurant Reservation System",
 	Description:      "API Gateway of Restaurant Reservation System",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

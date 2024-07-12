@@ -1,6 +1,7 @@
 package handler
 
 import (
+	_ "api-gateway/genproto/authentication"
 	pb "api-gateway/genproto/user"
 	"context"
 	"log"
@@ -52,7 +53,7 @@ func (h *Handler) GetUser(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param user_id path string true "User ID"
-// @Param new_info body user.UserInfo true "New info"
+// @Param new_info body authentication.UserDetails true "New info"
 // @Success 200 {object} string
 // @Failure 400 {object} string "Invalid user ID or data"
 // @Failure 500 {object} string "Server error while updating user"
@@ -75,6 +76,7 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 		log.Println(err)
 		return
 	}
+	user.Id = id
 
 	ctx, cancel := context.WithTimeout(c, time.Second*5)
 	defer cancel()

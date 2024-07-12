@@ -12,7 +12,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// @title API Gateway
+// @title Restaurant Reservation System
 // @version 1.0
 // @description API Gateway of Restaurant Reservation System
 // @host localhost:8080
