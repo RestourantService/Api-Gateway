@@ -229,7 +229,7 @@ func (h *Handler) ValidateReservation(c *gin.Context) {
 // @Description Inserts order for a reservation in Redis
 // @Tags reservation
 // @Param reservation_id path string true "Reservation ID"
-// @Param order body reservation.ReservationOrder true "New order"
+// @Param order body reservation.Order true "New order"
 // @Success 200 {object} reservation.ID
 // @Failure 400 {object} string "Invalid reservation ID or data"
 // @Failure 500 {object} string "Server error while ordering"
