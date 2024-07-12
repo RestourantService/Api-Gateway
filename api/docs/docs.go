@@ -574,6 +574,129 @@ const docTemplate = `{
                 }
             }
         },
+        "/reservation-system/reservations/{reservation_id}/check": {
+            "get": {
+                "description": "Checks whether a reservation exists in reservations table in PostgreSQL",
+                "tags": [
+                    "reservation"
+                ],
+                "summary": "Validates a reservation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Reservation ID",
+                        "name": "reservation_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/reservation.Status"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid reservation ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error while checking reservation",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/reservation-system/reservations/{reservation_id}/order": {
+            "post": {
+                "description": "Inserts order for a reservation in Redis",
+                "tags": [
+                    "reservation"
+                ],
+                "summary": "Orders meals",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Reservation ID",
+                        "name": "reservation_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "New order",
+                        "name": "order",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/reservation.ReservationOrders"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/reservation.ID"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid reservation ID or data",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error while ordering",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/reservation-system/reservations/{reservation_id}/payment": {
+            "post": {
+                "description": "Inserts payment info to payments table in PostgreSQL",
+                "tags": [
+                    "reservation"
+                ],
+                "summary": "Pays for a reservation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Reservation ID",
+                        "name": "reservation_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/reservation.Status"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid reservation ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error while making a payment",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/reservation-system/restaurants": {
             "get": {
                 "description": "Retrieves multiple restaurants info from restaurants table in PostgreSQL",
@@ -898,129 +1021,6 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Server error while deleting user",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/reservation-system/{reservation_id}/check": {
-            "get": {
-                "description": "Checks whether a reservation exists in reservations table in PostgreSQL",
-                "tags": [
-                    "reservation"
-                ],
-                "summary": "Validates a reservation",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Reservation ID",
-                        "name": "reservation_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/reservation.Status"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid reservation ID",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Server error while checking reservation",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/reservation-system/{reservation_id}/order": {
-            "post": {
-                "description": "Inserts order for a reservation in Redis",
-                "tags": [
-                    "reservation"
-                ],
-                "summary": "Orders meals",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Reservation ID",
-                        "name": "reservation_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "New order",
-                        "name": "order",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/reservation.ReservationOrders"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/reservation.ID"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid reservation ID or data",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Server error while ordering",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/reservation-system/{reservation_id}/payment": {
-            "post": {
-                "description": "Inserts payment info to payments table in PostgreSQL",
-                "tags": [
-                    "reservation"
-                ],
-                "summary": "Pays for a reservation",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Reservation ID",
-                        "name": "reservation_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/reservation.Status"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid reservation ID",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Server error while making a payment",
                         "schema": {
                             "type": "string"
                         }

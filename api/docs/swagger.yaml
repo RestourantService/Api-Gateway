@@ -202,87 +202,6 @@ info:
   title: Restaurant Reservation System
   version: "1.0"
 paths:
-  /reservation-system/{reservation_id}/check:
-    get:
-      description: Checks whether a reservation exists in reservations table in PostgreSQL
-      parameters:
-      - description: Reservation ID
-        in: path
-        name: reservation_id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/reservation.Status'
-        "400":
-          description: Invalid reservation ID
-          schema:
-            type: string
-        "500":
-          description: Server error while checking reservation
-          schema:
-            type: string
-      summary: Validates a reservation
-      tags:
-      - reservation
-  /reservation-system/{reservation_id}/order:
-    post:
-      description: Inserts order for a reservation in Redis
-      parameters:
-      - description: Reservation ID
-        in: path
-        name: reservation_id
-        required: true
-        type: string
-      - description: New order
-        in: body
-        name: order
-        required: true
-        schema:
-          $ref: '#/definitions/reservation.ReservationOrders'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/reservation.ID'
-        "400":
-          description: Invalid reservation ID or data
-          schema:
-            type: string
-        "500":
-          description: Server error while ordering
-          schema:
-            type: string
-      summary: Orders meals
-      tags:
-      - reservation
-  /reservation-system/{reservation_id}/payment:
-    post:
-      description: Inserts payment info to payments table in PostgreSQL
-      parameters:
-      - description: Reservation ID
-        in: path
-        name: reservation_id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/reservation.Status'
-        "400":
-          description: Invalid reservation ID
-          schema:
-            type: string
-        "500":
-          description: Server error while making a payment
-          schema:
-            type: string
-      summary: Pays for a reservation
-      tags:
-      - reservation
   /reservation-system/menu:
     get:
       description: Retrieves multiple meals info from menu table in PostgreSQL
@@ -651,6 +570,87 @@ paths:
           schema:
             type: string
       summary: Updates a reservation
+      tags:
+      - reservation
+  /reservation-system/reservations/{reservation_id}/check:
+    get:
+      description: Checks whether a reservation exists in reservations table in PostgreSQL
+      parameters:
+      - description: Reservation ID
+        in: path
+        name: reservation_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/reservation.Status'
+        "400":
+          description: Invalid reservation ID
+          schema:
+            type: string
+        "500":
+          description: Server error while checking reservation
+          schema:
+            type: string
+      summary: Validates a reservation
+      tags:
+      - reservation
+  /reservation-system/reservations/{reservation_id}/order:
+    post:
+      description: Inserts order for a reservation in Redis
+      parameters:
+      - description: Reservation ID
+        in: path
+        name: reservation_id
+        required: true
+        type: string
+      - description: New order
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/reservation.ReservationOrders'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/reservation.ID'
+        "400":
+          description: Invalid reservation ID or data
+          schema:
+            type: string
+        "500":
+          description: Server error while ordering
+          schema:
+            type: string
+      summary: Orders meals
+      tags:
+      - reservation
+  /reservation-system/reservations/{reservation_id}/payment:
+    post:
+      description: Inserts payment info to payments table in PostgreSQL
+      parameters:
+      - description: Reservation ID
+        in: path
+        name: reservation_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/reservation.Status'
+        "400":
+          description: Invalid reservation ID
+          schema:
+            type: string
+        "500":
+          description: Server error while making a payment
+          schema:
+            type: string
+      summary: Pays for a reservation
       tags:
       - reservation
   /reservation-system/restaurants:

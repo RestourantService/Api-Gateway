@@ -192,7 +192,7 @@ func (h *Handler) DeleteReservation(c *gin.Context) {
 // @Success 200 {object} reservation.Status
 // @Failure 400 {object} string "Invalid reservation ID"
 // @Failure 500 {object} string "Server error while checking reservation"
-// @Router /reservation-system/{reservation_id}/check [get]
+// @Router /reservation-system/reservations/{reservation_id}/check [get]
 func (h *Handler) ValidateReservation(c *gin.Context) {
 	h.Logger.Info("ValidateReservation method is starting")
 
@@ -233,7 +233,7 @@ func (h *Handler) ValidateReservation(c *gin.Context) {
 // @Success 200 {object} reservation.ID
 // @Failure 400 {object} string "Invalid reservation ID or data"
 // @Failure 500 {object} string "Server error while ordering"
-// @Router /reservation-system/{reservation_id}/order [post]
+// @Router /reservation-system/reservations/{reservation_id}/order [post]
 func (h *Handler) Order(c *gin.Context) {
 	h.Logger.Info("Order method is starting")
 
@@ -285,7 +285,7 @@ func (h *Handler) Order(c *gin.Context) {
 // @Success 200 {object} reservation.Status
 // @Failure 400 {object} string "Invalid reservation ID"
 // @Failure 500 {object} string "Server error while making a payment"
-// @Router /reservation-system/{reservation_id}/payment [post]
+// @Router /reservation-system/reservations/{reservation_id}/payment [post]
 func (h *Handler) Pay(c *gin.Context) {
 	h.Logger.Info("Pay method is starting")
 
