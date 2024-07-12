@@ -86,7 +86,7 @@ func (h *Handler) GetReservationByID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param reservation_id path string true "Reservation ID"
-// @Param new_info body reservation.ReservationInfo true "New info"
+// @Param new_info body reservation.ReservationDetails true "New info"
 // @Success 200 {object} string
 // @Failure 400 {object} string "Invalid reservation ID or data"
 // @Failure 500 {object} string "Server error while updating reservation"
@@ -274,8 +274,8 @@ func (h *Handler) Pay(c *gin.Context) {
 // @Tags reservation
 // @Param user_id query string false "User ID"
 // @Param restaurant_id query string false "Restaurant ID"
-// @Param limit path string false "Number of reservations to fetch"
-// @Param offset path string false "Number of reservations to omit"
+// @Param limit query string false "Number of reservations to fetch"
+// @Param offset query string false "Number of reservations to omit"
 // @Success 200 {object} reservation.Reservations
 // @Failure 400 {object} string "Invalid pagination parameters"
 // @Failure 500 {object} string "Server error while fetching reservations"

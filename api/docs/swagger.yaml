@@ -281,11 +281,11 @@ paths:
         name: restaurant_id
         type: string
       - description: Number of meals to fetch
-        in: path
+        in: query
         name: limit
         type: string
       - description: Number of meals to omit
-        in: path
+        in: query
         name: offset
         type: string
       responses:
@@ -393,7 +393,7 @@ paths:
         name: new_info
         required: true
         schema:
-          $ref: '#/definitions/menu.MealInfo'
+          $ref: '#/definitions/menu.MealDetails'
       produces:
       - application/json
       responses:
@@ -511,11 +511,11 @@ paths:
         name: restaurant_id
         type: string
       - description: Number of reservations to fetch
-        in: path
+        in: query
         name: limit
         type: string
       - description: Number of reservations to omit
-        in: path
+        in: query
         name: offset
         type: string
       responses:
@@ -623,7 +623,7 @@ paths:
         name: new_info
         required: true
         schema:
-          $ref: '#/definitions/reservation.ReservationInfo'
+          $ref: '#/definitions/reservation.ReservationDetails'
       produces:
       - application/json
       responses:
@@ -647,11 +647,11 @@ paths:
       description: Retrieves multiple restaurants info from restaurants table in PostgreSQL
       parameters:
       - description: Number of restaurants to fetch
-        in: path
+        in: query
         name: limit
         type: string
       - description: Number of restaurants to omit
-        in: path
+        in: query
         name: offset
         type: string
       responses:
@@ -759,7 +759,7 @@ paths:
         name: new_info
         required: true
         schema:
-          $ref: '#/definitions/restaurant.RestaurantInfo'
+          $ref: '#/definitions/restaurant.RestaurantDetails'
       produces:
       - application/json
       responses:

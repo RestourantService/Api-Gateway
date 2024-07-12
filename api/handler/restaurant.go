@@ -86,7 +86,7 @@ func (h *Handler) GetRestaurantByID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param restaurant_id path string true "Restaurant ID"
-// @Param new_info body restaurant.RestaurantInfo true "New info"
+// @Param new_info body restaurant.RestaurantDetails true "New info"
 // @Success 200 {object} string
 // @Failure 400 {object} string "Invalid restaurant ID or data"
 // @Failure 500 {object} string "Server error while updating restaurant"
@@ -122,7 +122,7 @@ func (h *Handler) UpdateRestaurant(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusNoContent, "Restaurant updated successfully")
+	c.JSON(http.StatusOK, "Restaurant updated successfully")
 }
 
 // DeleteRestaurant godoc
@@ -155,42 +155,50 @@ func (h *Handler) DeleteRestaurant(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusNoContent, "Restaurant deleted successfully")
+	c.JSON(http.StatusOK, "Restaurant deleted successfully")
 }
 
 // FetchRestaurants godoc
 // @Summary Fetches restaurants
 // @Description Retrieves multiple restaurants info from restaurants table in PostgreSQL
 // @Tags restaurant
-// @Param limit path string false "Number of restaurants to fetch"
-// @Param offset path string false "Number of restaurants to omit"
+// @Param limit query string false "Number of restaurants to fetch"
+// @Param offset query string false "Number of restaurants to omit"
 // @Success 200 {object} restaurant.Restaurants
 // @Failure 400 {object} string "Invalid pagination parameters"
 // @Failure 500 {object} string "Server error while fetching restaurants"
 // @Router /reservation-system/restaurants [get]
 func (h *Handler) FetchRestaurants(c *gin.Context) {
-	limit, err := strconv.Atoi(c.Query("limit"))
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid pagination parameters").Error()})
-		log.Println(err)
-		return
+	var pag pb.Pagination
+	limitStr := c.Query("limit")
+	offsetStr := c.Query("offset")
+
+	if limitStr != "" {
+		limit, err := strconv.Atoi(limitStr)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest,
+				gin.H{"error": errors.Wrap(err, "invalid pagination parameters").Error()})
+			log.Println(err)
+			return
+		}
+		pag.Limit = int32(limit)
 	}
-	offset, err := strconv.Atoi(c.Query("offset"))
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid pagination parameters").Error()})
-		log.Println(err)
-		return
+
+	if offsetStr != "" {
+		offset, err := strconv.Atoi(offsetStr)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest,
+				gin.H{"error": errors.Wrap(err, "invalid pagination parameters").Error()})
+			log.Println(err)
+			return
+		}
+		pag.Offset = int32(offset)
 	}
 
 	ctx, cancel := context.WithTimeout(c, time.Second*5)
 	defer cancel()
 
-	rests, err := h.RestaurantClient.FetchRestaurants(ctx, &pb.Pagination{
-		Limit:  int32(limit),
-		Offset: int32(offset),
-	})
+	rests, err := h.RestaurantClient.FetchRestaurants(ctx, &pag)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error fetching restaurants").Error()})

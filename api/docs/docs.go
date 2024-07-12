@@ -33,13 +33,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Number of meals to fetch",
                         "name": "limit",
-                        "in": "path"
+                        "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "Number of meals to omit",
                         "name": "offset",
-                        "in": "path"
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -165,7 +165,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/menu.MealInfo"
+                            "$ref": "#/definitions/menu.MealDetails"
                         }
                     }
                 ],
@@ -380,13 +380,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Number of reservations to fetch",
                         "name": "limit",
-                        "in": "path"
+                        "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "Number of reservations to omit",
                         "name": "offset",
-                        "in": "path"
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -512,7 +512,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/reservation.ReservationInfo"
+                            "$ref": "#/definitions/reservation.ReservationDetails"
                         }
                     }
                 ],
@@ -586,13 +586,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Number of restaurants to fetch",
                         "name": "limit",
-                        "in": "path"
+                        "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "Number of restaurants to omit",
                         "name": "offset",
-                        "in": "path"
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -718,7 +718,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/restaurant.RestaurantInfo"
+                            "$ref": "#/definitions/restaurant.RestaurantDetails"
                         }
                     }
                 ],

@@ -86,7 +86,7 @@ func (h *Handler) GetMealByID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param meal_id path string true "Meal ID"
-// @Param new_info body menu.MealInfo true "New info"
+// @Param new_info body menu.MealDetails true "New info"
 // @Success 200 {object} string
 // @Failure 400 {object} string "Invalid meal ID or data"
 // @Failure 500 {object} string "Server error while updating meal in menu"
@@ -122,7 +122,7 @@ func (h *Handler) UpdateMeal(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusNoContent, "Meal updated successfully")
+	c.JSON(http.StatusOK, "Meal updated successfully")
 }
 
 // DeleteMeal godoc
@@ -155,7 +155,7 @@ func (h *Handler) DeleteMeal(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusNoContent, "Meal removed successfully")
+	c.JSON(http.StatusOK, "Meal removed successfully")
 }
 
 // FetchMeals godoc
@@ -163,8 +163,8 @@ func (h *Handler) DeleteMeal(c *gin.Context) {
 // @Description Retrieves multiple meals info from menu table in PostgreSQL
 // @Tags menu
 // @Param restaurant_id query string false "Restaurant ID"
-// @Param limit path string false "Number of meals to fetch"
-// @Param offset path string false "Number of meals to omit"
+// @Param limit query string false "Number of meals to fetch"
+// @Param offset query string false "Number of meals to omit"
 // @Success 200 {object} menu.Meals
 // @Failure 400 {object} string "Invalid pagination parameters"
 // @Failure 500 {object} string "Server error while fetching meals from menu"
