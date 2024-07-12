@@ -423,7 +423,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/reservation.ReservationDetails"
+                            "$ref": "#/definitions/reservation.ReservationInsert"
                         }
                     }
                 ],
@@ -1187,6 +1187,23 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "reservation_time": {
+                    "type": "string"
+                },
+                "restaurant_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "reservation.ReservationInsert": {
+            "type": "object",
+            "properties": {
                 "reservation_time": {
                     "type": "string"
                 },

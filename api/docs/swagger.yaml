@@ -109,6 +109,17 @@ definitions:
       user_id:
         type: string
     type: object
+  reservation.ReservationInsert:
+    properties:
+      reservation_time:
+        type: string
+      restaurant_id:
+        type: string
+      status:
+        type: string
+      user_id:
+        type: string
+    type: object
   reservation.ReservationOrder:
     properties:
       menu_item_id:
@@ -542,7 +553,7 @@ paths:
         name: new_data
         required: true
         schema:
-          $ref: '#/definitions/reservation.ReservationDetails'
+          $ref: '#/definitions/reservation.ReservationInsert'
       responses:
         "200":
           description: OK
