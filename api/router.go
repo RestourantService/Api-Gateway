@@ -2,6 +2,7 @@ package api
 
 import (
 	"api-gateway/api/handler"
+	// "api-gateway/api/middleware"
 	"api-gateway/config"
 
 	_ "api-gateway/api/docs"
@@ -22,6 +23,8 @@ func NewRouter(cfg *config.Config) *gin.Engine {
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	api := r.Group("/reservation-system")
+	// api.Use(middleware.Check)
+
 	h := handler.NewHandler(cfg)
 
 	u := api.Group("/users")

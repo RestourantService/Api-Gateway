@@ -13,6 +13,15 @@ import (
 	"github.com/pkg/errors"
 )
 
+// CreateRestaurant godoc
+// @Summary Creates a restaurant
+// @Description Inserts new restaurant info to restaurants table in PostgreSQL
+// @Tags restaurant
+// @Param new_data body restaurant.RestaurantDetails true "New data"
+// @Success 200 {object} json
+// @Failure 400 {object} string "Invalid data"
+// @Failure 500 {object} string "Server error while creating restaurant"
+// @Router /reservation-system/restaurants [post]
 func (h *Handler) CreateRestaurant(c *gin.Context) {
 	var rest pb.RestaurantDetails
 	err := c.ShouldBind(&rest)
@@ -37,6 +46,15 @@ func (h *Handler) CreateRestaurant(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"New restaurant id": id.Id})
 }
 
+// GetRestaurantByID godoc
+// @Summary Gets a restaurant
+// @Description Retrieves restaurant info from restaurants table in PostgreSQL
+// @Tags restaurant
+// @Param restaurant_id path string true "Restaurant ID"
+// @Success 200 {object} restaurant.RestaurantInfo
+// @Failure 400 {object} string "Invalid restaurant ID"
+// @Failure 500 {object} string "Server error while getting restaurant"
+// @Router /reservation-system/restaurants/{restaurant_id} [get]
 func (h *Handler) GetRestaurantByID(c *gin.Context) {
 	id := c.Param("restaurant_id")
 	_, err := uuid.Parse(id)
@@ -61,6 +79,18 @@ func (h *Handler) GetRestaurantByID(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"Restaurant": rest})
 }
 
+// UpdateRestaurant godoc
+// @Summary Updates a restaurant
+// @Description Updates restaurant info in restaurants table in PostgreSQL
+// @Tags restaurant
+// @Accept json
+// @Produce json
+// @Param restaurant_id path string true "Restaurant ID"
+// @Param new_info body restaurant.RestaurantInfo true "New info"
+// @Success 200 {object} string
+// @Failure 400 {object} string "Invalid restaurant ID or data"
+// @Failure 500 {object} string "Server error while updating restaurant"
+// @Router /reservation-system/restaurants/{restaurant_id} [put]
 func (h *Handler) UpdateRestaurant(c *gin.Context) {
 	id := c.Param("restaurant_id")
 	_, err := uuid.Parse(id)
@@ -95,6 +125,15 @@ func (h *Handler) UpdateRestaurant(c *gin.Context) {
 	c.JSON(http.StatusNoContent, "Restaurant updated successfully")
 }
 
+// DeleteRestaurant godoc
+// @Summary Deletes a restaurant
+// @Description Deletes restaurant info from restaurants table in PostgreSQL
+// @Tags restaurant
+// @Param restaurant_id path string true "Restaurant ID"
+// @Success 200 {object} string
+// @Failure 400 {object} string "Invalid restaurant ID"
+// @Failure 500 {object} string "Server error while deleting restaurant"
+// @Router /reservation-system/restaurants/{restaurant_id} [delete]
 func (h *Handler) DeleteRestaurant(c *gin.Context) {
 	id := c.Param("restaurant_id")
 	_, err := uuid.Parse(id)
@@ -119,6 +158,16 @@ func (h *Handler) DeleteRestaurant(c *gin.Context) {
 	c.JSON(http.StatusNoContent, "Restaurant deleted successfully")
 }
 
+// FetchRestaurants godoc
+// @Summary Fetches restaurants
+// @Description Retrieves multiple restaurants info from restaurants table in PostgreSQL
+// @Tags restaurant
+// @Param limit path string false "Number of restaurants to fetch"
+// @Param offset path string false "Number of restaurants to omit"
+// @Success 200 {object} restaurant.Restaurants
+// @Failure 400 {object} string "Invalid pagination parameters"
+// @Failure 500 {object} string "Server error while fetching restaurants"
+// @Router /reservation-system/restaurants [get]
 func (h *Handler) FetchRestaurants(c *gin.Context) {
 	limit, err := strconv.Atoi(c.Query("limit"))
 	if err != nil {
@@ -133,12 +182,6 @@ func (h *Handler) FetchRestaurants(c *gin.Context) {
 			gin.H{"error": errors.Wrap(err, "invalid pagination parameters").Error()})
 		log.Println(err)
 		return
-	}
-	if limit <= 0 {
-		limit = 20
-	}
-	if offset < 0 {
-		offset = 0
 	}
 
 	ctx, cancel := context.WithTimeout(c, time.Second*5)

@@ -14,15 +14,13 @@ import (
 
 // GetUser godoc
 // @Summary Gets a user
-// @Description Retrieves a user from users table in PostgreSQL
+// @Description Retrieves user info from users table in PostgreSQL
 // @Tags user
-// @Accept json
-// @Produce json
-// @Param user_id path uuid true "User ID"
+// @Param user_id path string true "User ID"
 // @Success 200 {object} user.UserInfo
 // @Failure 400 {object} string "Invalid user ID"
-// @Failure 500 {object} string "Server error getting user"
-// @Router /:user_id [get]
+// @Failure 500 {object} string "Server error while getting user"
+// @Router /reservation-system/users/{user_id} [get]
 func (h *Handler) GetUser(c *gin.Context) {
 	id := c.Param("user_id")
 	_, err := uuid.Parse(id)
@@ -49,15 +47,16 @@ func (h *Handler) GetUser(c *gin.Context) {
 
 // UpdateUser godoc
 // @Summary Updates a user
-// @Description Updates a user in users table in PostgreSQL
+// @Description Updates user info in users table in PostgreSQL
 // @Tags user
 // @Accept json
 // @Produce json
-// @Param user_id path uuid true "User ID"
+// @Param user_id path string true "User ID"
+// @Param new_info body user.UserInfo true "New info"
 // @Success 200 {object} string
-// @Failure 400 {object} string "Invalid user ID"
-// @Failure 500 {object} string "Server error updating user"
-// @Router /:user_id [put]
+// @Failure 400 {object} string "Invalid user ID or data"
+// @Failure 500 {object} string "Server error while updating user"
+// @Router /reservation-system/users/{user_id} [put]
 func (h *Handler) UpdateUser(c *gin.Context) {
 	id := c.Param("user_id")
 	_, err := uuid.Parse(id)
@@ -93,15 +92,13 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 
 // DeleteUser godoc
 // @Summary Deletes a user
-// @Description Deletes a user from users table in PostgreSQL
+// @Description Deletes user info from users table in PostgreSQL
 // @Tags user
-// @Accept json
-// @Produce json
-// @Param user_id path uuid true "User ID"
+// @Param user_id path string true "User ID"
 // @Success 200 {object} string
 // @Failure 400 {object} string "Invalid user ID"
-// @Failure 500 {object} string "Server error deleting user"
-// @Router /:user_id [delete]
+// @Failure 500 {object} string "Server error while deleting user"
+// @Router /reservation-system/users/{user_id} [delete]
 func (h *Handler) DeleteUser(c *gin.Context) {
 	id := c.Param("user_id")
 	_, err := uuid.Parse(id)

@@ -12,6 +12,15 @@ import (
 	"github.com/pkg/errors"
 )
 
+// CreatePayment godoc
+// @Summary Creates a payment
+// @Description Inserts new payment info to payments table in PostgreSQL
+// @Tags payment
+// @Param new_data body payment.PaymentDetails true "New data"
+// @Success 200 {object} json
+// @Failure 400 {object} string "Invalid data"
+// @Failure 500 {object} string "Server error while creating payment"
+// @Router /reservation-system/payments [post]
 func (h *Handler) CreatePayment(c *gin.Context) {
 	var pay pb.PaymentDetails
 	err := c.ShouldBind(&pay)
@@ -36,6 +45,15 @@ func (h *Handler) CreatePayment(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"Status": status.Status})
 }
 
+// GetPayment godoc
+// @Summary Gets a payment
+// @Description Retrieves payment info from payments table in PostgreSQL
+// @Tags payment
+// @Param payment_id path string true "Payment ID"
+// @Success 200 {object} payment.PaymentInfo
+// @Failure 400 {object} string "Invalid payment ID"
+// @Failure 500 {object} string "Server error while getting payment"
+// @Router /reservation-system/payments/{payment_id} [get]
 func (h *Handler) GetPayment(c *gin.Context) {
 	id := c.Param("payment_id")
 	_, err := uuid.Parse(id)
@@ -60,6 +78,18 @@ func (h *Handler) GetPayment(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"Payment": pay})
 }
 
+// UpdatePayment godoc
+// @Summary Updates a payment
+// @Description Updates payment info in payments table in PostgreSQL
+// @Tags payment
+// @Accept json
+// @Produce json
+// @Param payment_id path string true "Payment ID"
+// @Param new_info body payment.PaymentInfo true "New info"
+// @Success 200 {object} string
+// @Failure 400 {object} string "Invalid payment ID or data"
+// @Failure 500 {object} string "Server error while updating payment"
+// @Router /reservation-system/payments/{payment_id} [put]
 func (h *Handler) UpdatePayment(c *gin.Context) {
 	id := c.Param("payment_id")
 	_, err := uuid.Parse(id)

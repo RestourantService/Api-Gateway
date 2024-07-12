@@ -8,6 +8,8 @@ import (
 	"api-gateway/genproto/restaurant"
 	"api-gateway/genproto/user"
 	"api-gateway/pkg"
+	"api-gateway/pkg/logger"
+	"log/slog"
 )
 
 type Handler struct {
@@ -16,6 +18,7 @@ type Handler struct {
 	ReservationClient reservation.ReservationClient
 	MenuClient        menu.MenuClient
 	PaymentClient     payment.PaymentClient
+	Logger            *slog.Logger
 }
 
 func NewHandler(cfg *config.Config) *Handler {
@@ -25,5 +28,6 @@ func NewHandler(cfg *config.Config) *Handler {
 		ReservationClient: pkg.NewReservationClient(cfg),
 		MenuClient:        pkg.NewMenuClient(cfg),
 		PaymentClient:     pkg.NewPaymentClient(cfg),
+		Logger:            logger.NewLogger(),
 	}
 }
