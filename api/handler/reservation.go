@@ -28,11 +28,11 @@ func (h *Handler) CreateReservation(c *gin.Context) {
 	var res pb.ReservationDetails
 	err := c.ShouldBind(&res)
 	if err != nil {
+		err := errors.Wrap(err, "invalid data").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid data").Error()})
-		
-		err := errors.Wrap(err, "failed to data")
-		h.Logger.Error(err.Error())
+			gin.H{"error": err})
+
+		h.Logger.Error(err)
 		return
 	}
 
@@ -41,11 +41,11 @@ func (h *Handler) CreateReservation(c *gin.Context) {
 
 	id, err := h.ReservationClient.CreateReservation(ctx, &res)
 	if err != nil {
+		err := errors.Wrap(err, "error creating reservation").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error creating reservation").Error()})
-		
-		err := errors.Wrap(err, "error creating reservation")
-		h.Logger.Error(err.Error())
+			gin.H{"error": err})
+
+		h.Logger.Error(err)
 		return
 	}
 
@@ -68,11 +68,11 @@ func (h *Handler) GetReservationByID(c *gin.Context) {
 	id := c.Param("reservation_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
+		err := errors.Wrap(err, "invalid reservation id").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid reservation id").Error()})
-		
-		err := errors.Wrap(err, "failed to data")
-		h.Logger.Error(err.Error())
+			gin.H{"error": err})
+
+		h.Logger.Error(err)
 		return
 	}
 
@@ -81,11 +81,11 @@ func (h *Handler) GetReservationByID(c *gin.Context) {
 
 	res, err := h.ReservationClient.GetReservationByID(ctx, &pb.ID{Id: id})
 	if err != nil {
+		err := errors.Wrap(err, "error getting reservation").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error getting reservation").Error()})
-		
-		err := errors.Wrap(err, "failed to GetReservationByID")
-		h.Logger.Error(err.Error())
+			gin.H{"error": err})
+
+		h.Logger.Error(err)
 		return
 	}
 
@@ -107,7 +107,7 @@ func (h *Handler) GetReservationByID(c *gin.Context) {
 // @Router /reservation-system/reservations/{reservation_id} [put]
 func (h *Handler) UpdateReservation(c *gin.Context) {
 	h.Logger.Info("UpdateReservation method is starting")
-	
+
 	id := c.Param("reservation_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
@@ -134,7 +134,7 @@ func (h *Handler) UpdateReservation(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error updating reservation").Error()})
-		
+
 		err := errors.Wrap(err, "failed to updating reservation").Error()
 		h.Logger.Error(err)
 		return
@@ -161,7 +161,7 @@ func (h *Handler) DeleteReservation(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid reservation id").Error()})
-		
+
 		err := errors.Wrap(err, "failed to data").Error()
 		h.Logger.Error(err)
 		return
@@ -174,7 +174,7 @@ func (h *Handler) DeleteReservation(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error deleting reservation").Error()})
-		
+
 		err := errors.Wrap(err, "failed to DeleteReservation").Error()
 		h.Logger.Error(err)
 		return
@@ -201,7 +201,7 @@ func (h *Handler) ValidateReservation(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid reservation id").Error()})
-		
+
 		err := errors.Wrap(err, "failed to data").Error()
 		h.Logger.Error(err)
 		return
@@ -214,7 +214,7 @@ func (h *Handler) ValidateReservation(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error checking reservation").Error()})
-		
+
 		err := errors.Wrap(err, "failed to ValidateReservation").Error()
 		h.Logger.Error(err)
 		return
@@ -229,7 +229,7 @@ func (h *Handler) ValidateReservation(c *gin.Context) {
 // @Description Inserts order for a reservation in Redis
 // @Tags reservation
 // @Param reservation_id path string true "Reservation ID"
-// @Param order body reservation.ReservationOrders true "New order"
+// @Param order body reservation.ReservationOrder true "New order"
 // @Success 200 {object} reservation.ID
 // @Failure 400 {object} string "Invalid reservation ID or data"
 // @Failure 500 {object} string "Server error while ordering"
@@ -242,32 +242,31 @@ func (h *Handler) Order(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid reservation id").Error()})
-		
+
 		err := errors.Wrap(err, "failed to data").Error()
 		h.Logger.Error(err)
 		return
 	}
 
-	var resOrd pb.ReservationOrders
-	err = c.ShouldBind(&resOrd)
+	var order pb.ReservationOrder
+	err = c.ShouldBind(&order)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid data").Error()})
-		
+
 		err := errors.Wrap(err, "failed to data").Error()
 		h.Logger.Error(err)
 		return
 	}
-	resOrd.Id = id
 
 	ctx, cancel := context.WithTimeout(c, time.Second*5)
 	defer cancel()
 
-	ordID, err := h.ReservationClient.Order(ctx, &resOrd)
+	ordID, err := h.ReservationClient.Order(ctx, &order)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error ordering").Error()})
-		
+
 		err := errors.Wrap(err, "failed to Pay").Error()
 		h.Logger.Error(err)
 		return
@@ -294,8 +293,8 @@ func (h *Handler) Pay(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid reservation id").Error()})
-		
-        err := errors.Wrap(err, "failed to data").Error()
+
+		err := errors.Wrap(err, "failed to data").Error()
 		h.Logger.Error(err)
 		return
 	}
@@ -307,7 +306,7 @@ func (h *Handler) Pay(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error making a payment").Error()})
-	
+
 		err := errors.Wrap(err, "failed to Pay").Error()
 		h.Logger.Error(err)
 		return
@@ -368,7 +367,7 @@ func (h *Handler) FetchReservations(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error fetching reservations").Error()})
-		
+
 		err := errors.Wrap(err, "failed to FetchReservations").Error()
 		h.Logger.Error(err)
 		return

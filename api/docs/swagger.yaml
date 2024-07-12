@@ -122,19 +122,12 @@ definitions:
     type: object
   reservation.ReservationOrder:
     properties:
+      id:
+        type: string
       menu_item_id:
         type: string
       quantity:
         type: integer
-    type: object
-  reservation.ReservationOrders:
-    properties:
-      id:
-        type: string
-      order:
-        items:
-          $ref: '#/definitions/reservation.ReservationOrder'
-        type: array
     type: object
   reservation.Reservations:
     properties:
@@ -611,7 +604,7 @@ paths:
         name: order
         required: true
         schema:
-          $ref: '#/definitions/reservation.ReservationOrders'
+          $ref: '#/definitions/reservation.ReservationOrder'
       responses:
         "200":
           description: OK
