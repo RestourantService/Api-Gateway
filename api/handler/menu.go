@@ -23,12 +23,16 @@ import (
 // @Failure 500 {object} string "Server error while adding meal to menu"
 // @Router /reservation-system/menu [post]
 func (h *Handler) AddMeal(c *gin.Context) {
+	h.Logger.Info("AddMeal method is starting")
+
 	var meal pb.MealDetails
 	err := c.ShouldBind(&meal)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid data").Error()})
-		log.Println(err)
+		gin.H{"error": errors.Wrap(err, "invalid data").Error()})
+
+		err := errors.Wrap(err, "failed to data")
+		h.Logger.Error(err.Error())
 		return
 	}
 
@@ -39,10 +43,13 @@ func (h *Handler) AddMeal(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error adding meal to menu").Error()})
-		log.Println(err)
+
+		err := errors.Wrap(err, "failed to AddMeal Menu")
+		h.Logger.Error(err.Error())
 		return
 	}
 
+	h.Logger.Info("AddMeal has successfully finished")
 	c.JSON(http.StatusCreated, gin.H{"New meal id": id.Id})
 }
 
@@ -56,12 +63,16 @@ func (h *Handler) AddMeal(c *gin.Context) {
 // @Failure 500 {object} string "Server error while getting meal from menu"
 // @Router /reservation-system/menu/{meal_id} [get]
 func (h *Handler) GetMealByID(c *gin.Context) {
+	h.Logger.Info("GetmealById method is starting")
+
 	id := c.Param("meal_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid meal id").Error()})
-		log.Println(err)
+			
+		err := errors.Wrap(err, "failed to data")
+		h.Logger.Error(err.Error())
 		return
 	}
 
@@ -72,10 +83,13 @@ func (h *Handler) GetMealByID(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error getting meal from menu").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to AddMeal Menu")
+		h.Logger.Error(err.Error())
 		return
 	}
 
+	h.Logger.Info("GetMealById has successfully finished")
 	c.JSON(http.StatusOK, gin.H{"Meal": meal})
 }
 
@@ -92,12 +106,16 @@ func (h *Handler) GetMealByID(c *gin.Context) {
 // @Failure 500 {object} string "Server error while updating meal in menu"
 // @Router /reservation-system/menu/{meal_id} [put]
 func (h *Handler) UpdateMeal(c *gin.Context) {
+	h.Logger.Info("UpdateMeal method is starting")
+
 	id := c.Param("meal_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid meal id").Error()})
-		log.Println(err)
+				
+		err := errors.Wrap(err, "failed to data")
+		h.Logger.Error(err.Error())
 		return
 	}
 
@@ -118,10 +136,13 @@ func (h *Handler) UpdateMeal(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error updating meal in menu").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to AddMeal Menu")
+		h.Logger.Error(err.Error())
 		return
 	}
 
+	h.Logger.Info("UpdateMeal has successfully finished")
 	c.JSON(http.StatusOK, "Meal updated successfully")
 }
 
@@ -135,12 +156,16 @@ func (h *Handler) UpdateMeal(c *gin.Context) {
 // @Failure 500 {object} string "Server error while removing meal from menu"
 // @Router /reservation-system/menu/{meal_id} [delete]
 func (h *Handler) DeleteMeal(c *gin.Context) {
+	h.Logger.Info("DeleteMeal method is starting")
+
 	id := c.Param("meal_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid meal id").Error()})
-		log.Println(err)
+			
+		err := errors.Wrap(err, "failed to data")
+		h.Logger.Error(err.Error())
 		return
 	}
 
@@ -151,10 +176,13 @@ func (h *Handler) DeleteMeal(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error removing meal from menu").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to AddMeal Menu")
+		h.Logger.Error(err.Error())
 		return
 	}
 
+	h.Logger.Info("DeleteMeal has successfully finished")
 	c.JSON(http.StatusOK, "Meal removed successfully")
 }
 
@@ -170,6 +198,8 @@ func (h *Handler) DeleteMeal(c *gin.Context) {
 // @Failure 500 {object} string "Server error while fetching meals from menu"
 // @Router /reservation-system/menu [get]
 func (h *Handler) FetchMeals(c *gin.Context) {
+	h.Logger.Info("FetchMeals method is starting")
+
 	filter := pb.Filter{
 		RestaurantId: c.Query("restaurant_id"),
 	}
@@ -205,9 +235,12 @@ func (h *Handler) FetchMeals(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error fetching meals from menu").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to AddMeal Menu")
+		h.Logger.Error(err.Error())
 		return
 	}
 
+	h.Logger.Info("FetchMeals has successfully finished")
 	c.JSON(http.StatusOK, gin.H{"Meals": meals})
 }

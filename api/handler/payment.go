@@ -22,12 +22,16 @@ import (
 // @Failure 500 {object} string "Server error while creating payment"
 // @Router /reservation-system/payments [post]
 func (h *Handler) CreatePayment(c *gin.Context) {
+	h.Logger.Info("CreatePayment method is starting")
+
 	var pay pb.PaymentDetails
 	err := c.ShouldBind(&pay)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid data").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to data")
+		h.Logger.Error(err.Error())
 		return
 	}
 
@@ -38,10 +42,13 @@ func (h *Handler) CreatePayment(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error creating payment").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to AddPayment")
+		h.Logger.Error(err.Error())
 		return
 	}
 
+	h.Logger.Info("CreatePayment has successfully finished")
 	c.JSON(http.StatusCreated, gin.H{"Status": status.Status})
 }
 
@@ -55,12 +62,16 @@ func (h *Handler) CreatePayment(c *gin.Context) {
 // @Failure 500 {object} string "Server error while getting payment"
 // @Router /reservation-system/payments/{payment_id} [get]
 func (h *Handler) GetPayment(c *gin.Context) {
+	h.Logger.Info("GetPayment method is starting")
+
 	id := c.Param("payment_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid payment id").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to data")
+		h.Logger.Error(err.Error())
 		return
 	}
 
@@ -71,10 +82,13 @@ func (h *Handler) GetPayment(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error getting payment").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to GetPayment")
+		h.Logger.Error(err.Error())
 		return
 	}
 
+	h.Logger.Info("GetPayment has successfully finished")
 	c.JSON(http.StatusOK, gin.H{"Payment": pay})
 }
 
@@ -91,12 +105,16 @@ func (h *Handler) GetPayment(c *gin.Context) {
 // @Failure 500 {object} string "Server error while updating payment"
 // @Router /reservation-system/payments/{payment_id} [put]
 func (h *Handler) UpdatePayment(c *gin.Context) {
+	h.Logger.Info("UpdatePayment method is starting")
+
 	id := c.Param("payment_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid payment id").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to data")
+		h.Logger.Error(err.Error())
 		return
 	}
 
@@ -117,9 +135,12 @@ func (h *Handler) UpdatePayment(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error updating payment").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "error updating payment")
+		h.Logger.Error(err.Error())
 		return
 	}
 
+	h.Logger.Info("UpdatePayment has successfully finished")
 	c.JSON(http.StatusOK, "Payment updated successfully")
 }

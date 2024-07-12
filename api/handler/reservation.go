@@ -23,12 +23,16 @@ import (
 // @Failure 500 {object} string "Server error while creating reservation"
 // @Router /reservation-system/reservations [post]
 func (h *Handler) CreateReservation(c *gin.Context) {
+	h.Logger.Info("CreateReservation method is starting")
+
 	var res pb.ReservationDetails
 	err := c.ShouldBind(&res)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid data").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to data")
+		h.Logger.Error(err.Error())
 		return
 	}
 
@@ -39,10 +43,13 @@ func (h *Handler) CreateReservation(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error creating reservation").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "error creating reservation")
+		h.Logger.Error(err.Error())
 		return
 	}
 
+	h.Logger.Info("createdReservation has successfully finished")
 	c.JSON(http.StatusCreated, gin.H{"New reservation id": id.Id})
 }
 
@@ -56,12 +63,16 @@ func (h *Handler) CreateReservation(c *gin.Context) {
 // @Failure 500 {object} string "Server error while getting reservation"
 // @Router /reservation-system/reservations/{reservation_id} [get]
 func (h *Handler) GetReservationByID(c *gin.Context) {
+	h.Logger.Info("GetReservationByID method is starting")
+
 	id := c.Param("reservation_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid reservation id").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to data")
+		h.Logger.Error(err.Error())
 		return
 	}
 
@@ -72,10 +83,13 @@ func (h *Handler) GetReservationByID(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error getting reservation").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to GetReservationByID")
+		h.Logger.Error(err.Error())
 		return
 	}
 
+	h.Logger.Info("GetReservationByID has successfully finished")
 	c.JSON(http.StatusOK, gin.H{"Reservation": res})
 }
 
@@ -92,6 +106,8 @@ func (h *Handler) GetReservationByID(c *gin.Context) {
 // @Failure 500 {object} string "Server error while updating reservation"
 // @Router /reservation-system/reservations/{reservation_id} [put]
 func (h *Handler) UpdateReservation(c *gin.Context) {
+	h.Logger.Info("UpdateReservation method is starting")
+	
 	id := c.Param("reservation_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
@@ -118,10 +134,13 @@ func (h *Handler) UpdateReservation(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error updating reservation").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to updating reservation").Error()
+		h.Logger.Error(err)
 		return
 	}
 
+	h.Logger.Info("UpdateReservation has successfully finished")
 	c.JSON(http.StatusOK, "Reservation updated successfully")
 }
 
@@ -135,12 +154,16 @@ func (h *Handler) UpdateReservation(c *gin.Context) {
 // @Failure 500 {object} string "Server error while deleting reservation"
 // @Router /reservation-system/reservations/{reservation_id} [delete]
 func (h *Handler) DeleteReservation(c *gin.Context) {
+	h.Logger.Info("DeleteReservation method is starting")
+
 	id := c.Param("reservation_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid reservation id").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to data").Error()
+		h.Logger.Error(err)
 		return
 	}
 
@@ -151,10 +174,13 @@ func (h *Handler) DeleteReservation(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error deleting reservation").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to DeleteReservation").Error()
+		h.Logger.Error(err)
 		return
 	}
 
+	h.Logger.Info("DeleteReservation has successfully finished")
 	c.JSON(http.StatusOK, "Reservation deleted successfully")
 }
 
@@ -168,12 +194,16 @@ func (h *Handler) DeleteReservation(c *gin.Context) {
 // @Failure 500 {object} string "Server error while checking reservation"
 // @Router /reservation-system/{reservation_id}/check [get]
 func (h *Handler) ValidateReservation(c *gin.Context) {
+	h.Logger.Info("ValidateReservation method is starting")
+
 	id := c.Param("reservation_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid reservation id").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to data").Error()
+		h.Logger.Error(err)
 		return
 	}
 
@@ -184,10 +214,13 @@ func (h *Handler) ValidateReservation(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error checking reservation").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to ValidateReservation").Error()
+		h.Logger.Error(err)
 		return
 	}
 
+	h.Logger.Info("ValidateReservation has successfully finished")
 	c.JSON(http.StatusOK, gin.H{"Valid reservation": status.Successful})
 }
 
@@ -202,12 +235,16 @@ func (h *Handler) ValidateReservation(c *gin.Context) {
 // @Failure 500 {object} string "Server error while ordering"
 // @Router /reservation-system/{reservation_id}/order [post]
 func (h *Handler) Order(c *gin.Context) {
+	h.Logger.Info("Order method is starting")
+
 	id := c.Param("reservation_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid reservation id").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to data").Error()
+		h.Logger.Error(err)
 		return
 	}
 
@@ -216,7 +253,9 @@ func (h *Handler) Order(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid data").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to data").Error()
+		h.Logger.Error(err)
 		return
 	}
 	resOrd.Id = id
@@ -228,10 +267,13 @@ func (h *Handler) Order(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error ordering").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to Pay").Error()
+		h.Logger.Error(err)
 		return
 	}
 
+	h.Logger.Info("Order has successfully finished")
 	c.JSON(http.StatusCreated, gin.H{"New order id": ordID.Id})
 }
 
@@ -245,12 +287,16 @@ func (h *Handler) Order(c *gin.Context) {
 // @Failure 500 {object} string "Server error while making a payment"
 // @Router /reservation-system/{reservation_id}/payment [post]
 func (h *Handler) Pay(c *gin.Context) {
+	h.Logger.Info("Pay method is starting")
+
 	id := c.Param("reservation_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
 			gin.H{"error": errors.Wrap(err, "invalid reservation id").Error()})
-		log.Println(err)
+		
+        err := errors.Wrap(err, "failed to data").Error()
+		h.Logger.Error(err)
 		return
 	}
 
@@ -261,10 +307,13 @@ func (h *Handler) Pay(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error making a payment").Error()})
-		log.Println(err)
+	
+		err := errors.Wrap(err, "failed to Pay").Error()
+		h.Logger.Error(err)
 		return
 	}
 
+	h.Logger.Info("Pay has successfully finished")
 	c.JSON(http.StatusOK, gin.H{"Payment success": status.Successful})
 }
 
@@ -281,6 +330,8 @@ func (h *Handler) Pay(c *gin.Context) {
 // @Failure 500 {object} string "Server error while fetching reservations"
 // @Router /reservation-system/reservations [get]
 func (h *Handler) FetchReservations(c *gin.Context) {
+	h.Logger.Info("FetchReservations method is starting")
+
 	filter := pb.Filter{
 		UserId:       c.Query("user_id"),
 		RestaurantId: c.Query("restaurant_id"),
@@ -317,9 +368,12 @@ func (h *Handler) FetchReservations(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 			gin.H{"error": errors.Wrap(err, "error fetching reservations").Error()})
-		log.Println(err)
+		
+		err := errors.Wrap(err, "failed to FetchReservations").Error()
+		h.Logger.Error(err)
 		return
 	}
 
+	h.Logger.Info("FetchReservations has successfully finished")
 	c.JSON(http.StatusOK, gin.H{"Reservations": resers})
 }

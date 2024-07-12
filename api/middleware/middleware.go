@@ -31,6 +31,7 @@ func Check(c *gin.Context) {
 		})
 		return
 	}
+	
 
 	err = token.Claims.Valid()
 	if err != nil {
