@@ -633,7 +633,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/reservation.ReservationOrder"
+                            "$ref": "#/definitions/reservation.Order"
                         }
                     }
                 ],
@@ -1167,6 +1167,17 @@ const docTemplate = `{
                 }
             }
         },
+        "reservation.Order": {
+            "type": "object",
+            "properties": {
+                "menu_item_id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                }
+            }
+        },
         "reservation.ReservationDetails": {
             "type": "object",
             "properties": {
@@ -1215,20 +1226,6 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "string"
-                }
-            }
-        },
-        "reservation.ReservationOrder": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "menu_item_id": {
-                    "type": "string"
-                },
-                "quantity": {
-                    "type": "integer"
                 }
             }
         },
