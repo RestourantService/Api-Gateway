@@ -17,7 +17,7 @@ import (
 // @Description Inserts new payment info to payments table in PostgreSQL
 // @Tags payment
 // @Param new_data body payment.PaymentDetails true "New data"
-// @Success 200 {object} json
+// @Success 200 {object} payment.Status
 // @Failure 400 {object} string "Invalid data"
 // @Failure 500 {object} string "Server error while creating payment"
 // @Router /reservation-system/payments [post]

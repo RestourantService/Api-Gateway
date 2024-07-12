@@ -86,7 +86,7 @@ func (h *Handler) GetMealByID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param meal_id path string true "Meal ID"
-// @Param new_info body meal.MealInfo true "New info"
+// @Param new_info body menu.MealInfo true "New info"
 // @Success 200 {object} string
 // @Failure 400 {object} string "Invalid meal ID or data"
 // @Failure 500 {object} string "Server error while updating meal in menu"

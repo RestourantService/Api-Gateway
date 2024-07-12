@@ -18,7 +18,7 @@ import (
 // @Description Inserts new restaurant info to restaurants table in PostgreSQL
 // @Tags restaurant
 // @Param new_data body restaurant.RestaurantDetails true "New data"
-// @Success 200 {object} json
+// @Success 200 {object} restaurant.ID
 // @Failure 400 {object} string "Invalid data"
 // @Failure 500 {object} string "Server error while creating restaurant"
 // @Router /reservation-system/restaurants [post]

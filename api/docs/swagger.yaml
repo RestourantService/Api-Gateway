@@ -1,0 +1,844 @@
+definitions:
+  menu.ID:
+    properties:
+      id:
+        type: string
+    type: object
+  menu.MealDetails:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      restaurant_id:
+        type: string
+    type: object
+  menu.MealInfo:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      restaurant_id:
+        type: string
+    type: object
+  menu.Meals:
+    properties:
+      meals:
+        items:
+          $ref: '#/definitions/menu.MealInfo'
+        type: array
+    type: object
+  payment.PaymentDetails:
+    properties:
+      amount:
+        type: number
+      payment_method:
+        type: string
+      reservation_id:
+        type: string
+    type: object
+  payment.PaymentInfo:
+    properties:
+      amount:
+        type: number
+      id:
+        type: string
+      payment_method:
+        type: string
+      payment_status:
+        type: string
+      reservation_id:
+        type: string
+    type: object
+  payment.Status:
+    properties:
+      status:
+        type: string
+    type: object
+  reservation.ID:
+    properties:
+      id:
+        type: string
+    type: object
+  reservation.ReservationDetails:
+    properties:
+      reservation_time:
+        type: string
+      restaurant_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  reservation.ReservationInfo:
+    properties:
+      id:
+        type: string
+      reservation_time:
+        type: string
+      restaurant_id:
+        type: string
+      status:
+        type: string
+      user_id:
+        type: string
+    type: object
+  reservation.ReservationOrder:
+    properties:
+      menu_item_id:
+        type: string
+      quantity:
+        type: integer
+    type: object
+  reservation.ReservationOrders:
+    properties:
+      id:
+        type: string
+      order:
+        items:
+          $ref: '#/definitions/reservation.ReservationOrder'
+        type: array
+    type: object
+  reservation.Reservations:
+    properties:
+      reservations:
+        items:
+          $ref: '#/definitions/reservation.ReservationInfo'
+        type: array
+    type: object
+  reservation.Status:
+    properties:
+      successful:
+        type: boolean
+    type: object
+  restaurant.ID:
+    properties:
+      id:
+        type: string
+    type: object
+  restaurant.RestaurantDetails:
+    properties:
+      address:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      phone_number:
+        type: string
+    type: object
+  restaurant.RestaurantInfo:
+    properties:
+      address:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      phone_number:
+        type: string
+    type: object
+  restaurant.Restaurants:
+    properties:
+      restaurants:
+        items:
+          $ref: '#/definitions/restaurant.RestaurantInfo'
+        type: array
+    type: object
+  user.UserInfo:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API Gateway of Restaurant Reservation System
+  title: API Gateway
+  version: "1.0"
+paths:
+  /reservation-system/{reservation_id}/check:
+    get:
+      description: Checks whether a reservation exists in reservations table in PostgreSQL
+      parameters:
+      - description: Reservation ID
+        in: path
+        name: reservation_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/reservation.Status'
+        "400":
+          description: Invalid reservation ID
+          schema:
+            type: string
+        "500":
+          description: Server error while checking reservation
+          schema:
+            type: string
+      summary: Validates a reservation
+      tags:
+      - reservation
+  /reservation-system/{reservation_id}/order:
+    post:
+      description: Inserts order for a reservation in Redis
+      parameters:
+      - description: Reservation ID
+        in: path
+        name: reservation_id
+        required: true
+        type: string
+      - description: New order
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/reservation.ReservationOrders'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/reservation.ID'
+        "400":
+          description: Invalid reservation ID or data
+          schema:
+            type: string
+        "500":
+          description: Server error while ordering
+          schema:
+            type: string
+      summary: Orders meals
+      tags:
+      - reservation
+  /reservation-system/{reservation_id}/payment:
+    post:
+      description: Inserts payment info to payments table in PostgreSQL
+      parameters:
+      - description: Reservation ID
+        in: path
+        name: reservation_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/reservation.Status'
+        "400":
+          description: Invalid reservation ID
+          schema:
+            type: string
+        "500":
+          description: Server error while making a payment
+          schema:
+            type: string
+      summary: Pays for a reservation
+      tags:
+      - reservation
+  /reservation-system/menu:
+    get:
+      description: Retrieves multiple meals info from menu table in PostgreSQL
+      parameters:
+      - description: Restaurant ID
+        in: query
+        name: restaurant_id
+        type: string
+      - description: Number of meals to fetch
+        in: path
+        name: limit
+        type: string
+      - description: Number of meals to omit
+        in: path
+        name: offset
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/menu.Meals'
+        "400":
+          description: Invalid pagination parameters
+          schema:
+            type: string
+        "500":
+          description: Server error while fetching meals from menu
+          schema:
+            type: string
+      summary: Fetches meals
+      tags:
+      - menu
+    post:
+      description: Inserts new meal info to menu table in PostgreSQL
+      parameters:
+      - description: New data
+        in: body
+        name: new_data
+        required: true
+        schema:
+          $ref: '#/definitions/menu.MealDetails'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/menu.ID'
+        "400":
+          description: Invalid data
+          schema:
+            type: string
+        "500":
+          description: Server error while adding meal to menu
+          schema:
+            type: string
+      summary: Adds a meal to menu
+      tags:
+      - menu
+  /reservation-system/menu/{meal_id}:
+    delete:
+      description: Removes meal info from menu table in PostgreSQL
+      parameters:
+      - description: Meal ID
+        in: path
+        name: meal_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Invalid meal ID
+          schema:
+            type: string
+        "500":
+          description: Server error while removing meal from menu
+          schema:
+            type: string
+      summary: Deletes a meal
+      tags:
+      - menu
+    get:
+      description: Retrieves meal info from menu table in PostgreSQL
+      parameters:
+      - description: Meal ID
+        in: path
+        name: meal_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/menu.MealInfo'
+        "400":
+          description: Invalid meal ID
+          schema:
+            type: string
+        "500":
+          description: Server error while getting meal from menu
+          schema:
+            type: string
+      summary: Gets a meal
+      tags:
+      - menu
+    put:
+      consumes:
+      - application/json
+      description: Updates meal info in menu table in PostgreSQL
+      parameters:
+      - description: Meal ID
+        in: path
+        name: meal_id
+        required: true
+        type: string
+      - description: New info
+        in: body
+        name: new_info
+        required: true
+        schema:
+          $ref: '#/definitions/menu.MealInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Invalid meal ID or data
+          schema:
+            type: string
+        "500":
+          description: Server error while updating meal in menu
+          schema:
+            type: string
+      summary: Updates a meal
+      tags:
+      - menu
+  /reservation-system/payments:
+    post:
+      description: Inserts new payment info to payments table in PostgreSQL
+      parameters:
+      - description: New data
+        in: body
+        name: new_data
+        required: true
+        schema:
+          $ref: '#/definitions/payment.PaymentDetails'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payment.Status'
+        "400":
+          description: Invalid data
+          schema:
+            type: string
+        "500":
+          description: Server error while creating payment
+          schema:
+            type: string
+      summary: Creates a payment
+      tags:
+      - payment
+  /reservation-system/payments/{payment_id}:
+    get:
+      description: Retrieves payment info from payments table in PostgreSQL
+      parameters:
+      - description: Payment ID
+        in: path
+        name: payment_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payment.PaymentInfo'
+        "400":
+          description: Invalid payment ID
+          schema:
+            type: string
+        "500":
+          description: Server error while getting payment
+          schema:
+            type: string
+      summary: Gets a payment
+      tags:
+      - payment
+    put:
+      consumes:
+      - application/json
+      description: Updates payment info in payments table in PostgreSQL
+      parameters:
+      - description: Payment ID
+        in: path
+        name: payment_id
+        required: true
+        type: string
+      - description: New info
+        in: body
+        name: new_info
+        required: true
+        schema:
+          $ref: '#/definitions/payment.PaymentInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Invalid payment ID or data
+          schema:
+            type: string
+        "500":
+          description: Server error while updating payment
+          schema:
+            type: string
+      summary: Updates a payment
+      tags:
+      - payment
+  /reservation-system/reservations:
+    get:
+      description: Retrieves multiple reservations info from reservations table in
+        PostgreSQL
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        type: string
+      - description: Restaurant ID
+        in: query
+        name: restaurant_id
+        type: string
+      - description: Number of reservations to fetch
+        in: path
+        name: limit
+        type: string
+      - description: Number of reservations to omit
+        in: path
+        name: offset
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/reservation.Reservations'
+        "400":
+          description: Invalid pagination parameters
+          schema:
+            type: string
+        "500":
+          description: Server error while fetching reservations
+          schema:
+            type: string
+      summary: Fetches reservations
+      tags:
+      - reservation
+    post:
+      description: Inserts new reservation info to reservations table in PostgreSQL
+      parameters:
+      - description: New data
+        in: body
+        name: new_data
+        required: true
+        schema:
+          $ref: '#/definitions/reservation.ReservationDetails'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/reservation.ID'
+        "400":
+          description: Invalid data
+          schema:
+            type: string
+        "500":
+          description: Server error while creating reservation
+          schema:
+            type: string
+      summary: Creates a reservation
+      tags:
+      - reservation
+  /reservation-system/reservations/{reservation_id}:
+    delete:
+      description: Deletes reservation info from reservations table in PostgreSQL
+      parameters:
+      - description: Reservation ID
+        in: path
+        name: reservation_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Invalid reservation ID
+          schema:
+            type: string
+        "500":
+          description: Server error while deleting reservation
+          schema:
+            type: string
+      summary: Deletes a reservation
+      tags:
+      - reservation
+    get:
+      description: Retrieves reservation info from reservations table in PostgreSQL
+      parameters:
+      - description: Reservation ID
+        in: path
+        name: reservation_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/reservation.ReservationInfo'
+        "400":
+          description: Invalid reservation ID
+          schema:
+            type: string
+        "500":
+          description: Server error while getting reservation
+          schema:
+            type: string
+      summary: Gets a reservation
+      tags:
+      - reservation
+    put:
+      consumes:
+      - application/json
+      description: Updates reservation info in reservations table in PostgreSQL
+      parameters:
+      - description: Reservation ID
+        in: path
+        name: reservation_id
+        required: true
+        type: string
+      - description: New info
+        in: body
+        name: new_info
+        required: true
+        schema:
+          $ref: '#/definitions/reservation.ReservationInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Invalid reservation ID or data
+          schema:
+            type: string
+        "500":
+          description: Server error while updating reservation
+          schema:
+            type: string
+      summary: Updates a reservation
+      tags:
+      - reservation
+  /reservation-system/restaurants:
+    get:
+      description: Retrieves multiple restaurants info from restaurants table in PostgreSQL
+      parameters:
+      - description: Number of restaurants to fetch
+        in: path
+        name: limit
+        type: string
+      - description: Number of restaurants to omit
+        in: path
+        name: offset
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restaurant.Restaurants'
+        "400":
+          description: Invalid pagination parameters
+          schema:
+            type: string
+        "500":
+          description: Server error while fetching restaurants
+          schema:
+            type: string
+      summary: Fetches restaurants
+      tags:
+      - restaurant
+    post:
+      description: Inserts new restaurant info to restaurants table in PostgreSQL
+      parameters:
+      - description: New data
+        in: body
+        name: new_data
+        required: true
+        schema:
+          $ref: '#/definitions/restaurant.RestaurantDetails'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restaurant.ID'
+        "400":
+          description: Invalid data
+          schema:
+            type: string
+        "500":
+          description: Server error while creating restaurant
+          schema:
+            type: string
+      summary: Creates a restaurant
+      tags:
+      - restaurant
+  /reservation-system/restaurants/{restaurant_id}:
+    delete:
+      description: Deletes restaurant info from restaurants table in PostgreSQL
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: restaurant_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Invalid restaurant ID
+          schema:
+            type: string
+        "500":
+          description: Server error while deleting restaurant
+          schema:
+            type: string
+      summary: Deletes a restaurant
+      tags:
+      - restaurant
+    get:
+      description: Retrieves restaurant info from restaurants table in PostgreSQL
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: restaurant_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restaurant.RestaurantInfo'
+        "400":
+          description: Invalid restaurant ID
+          schema:
+            type: string
+        "500":
+          description: Server error while getting restaurant
+          schema:
+            type: string
+      summary: Gets a restaurant
+      tags:
+      - restaurant
+    put:
+      consumes:
+      - application/json
+      description: Updates restaurant info in restaurants table in PostgreSQL
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: restaurant_id
+        required: true
+        type: string
+      - description: New info
+        in: body
+        name: new_info
+        required: true
+        schema:
+          $ref: '#/definitions/restaurant.RestaurantInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Invalid restaurant ID or data
+          schema:
+            type: string
+        "500":
+          description: Server error while updating restaurant
+          schema:
+            type: string
+      summary: Updates a restaurant
+      tags:
+      - restaurant
+  /reservation-system/users/{user_id}:
+    delete:
+      description: Deletes user info from users table in PostgreSQL
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Invalid user ID
+          schema:
+            type: string
+        "500":
+          description: Server error while deleting user
+          schema:
+            type: string
+      summary: Deletes a user
+      tags:
+      - user
+    get:
+      description: Retrieves user info from users table in PostgreSQL
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.UserInfo'
+        "400":
+          description: Invalid user ID
+          schema:
+            type: string
+        "500":
+          description: Server error while getting user
+          schema:
+            type: string
+      summary: Gets a user
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: Updates user info in users table in PostgreSQL
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: New info
+        in: body
+        name: new_info
+        required: true
+        schema:
+          $ref: '#/definitions/user.UserInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Invalid user ID or data
+          schema:
+            type: string
+        "500":
+          description: Server error while updating user
+          schema:
+            type: string
+      summary: Updates a user
+      tags:
+      - user
+swagger: "2.0"
