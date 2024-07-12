@@ -28,11 +28,11 @@ func (h *Handler) CreateRestaurant(c *gin.Context) {
 	var rest pb.RestaurantDetails
 	err := c.ShouldBind(&rest)
 	if err != nil {
+		err := errors.Wrap(err, "invalid data").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid data").Error()})
+			gin.H{"error": err})
 
-		err := errors.Wrap(err, "failed to data")
-		h.Logger.Error(err.Error())
+		h.Logger.Error(err)
 		return
 	}
 
@@ -41,10 +41,10 @@ func (h *Handler) CreateRestaurant(c *gin.Context) {
 
 	id, err := h.RestaurantClient.CreateRestaurant(ctx, &rest)
 	if err != nil {
+		err := errors.Wrap(err, "error creating restaurant").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error creating restaurant").Error()})
+			gin.H{"error": err})
 
-		err := errors.Wrap(err, "failed to CreateRestaurant").Error()
 		h.Logger.Error(err)
 		return
 	}
@@ -68,10 +68,10 @@ func (h *Handler) GetRestaurantByID(c *gin.Context) {
 	id := c.Param("restaurant_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
+		err := errors.Wrap(err, "invalid restaurant id").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid restaurant id").Error()})
+			gin.H{"error": err})
 
-		err := errors.Wrap(err, "failed to data").Error()
 		h.Logger.Error(err)
 		return
 	}
@@ -81,10 +81,10 @@ func (h *Handler) GetRestaurantByID(c *gin.Context) {
 
 	rest, err := h.RestaurantClient.GetRestaurantByID(ctx, &pb.ID{Id: id})
 	if err != nil {
+		err := errors.Wrap(err, "error getting restaurant").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error getting restaurant").Error()})
+			gin.H{"error": err})
 
-		err := errors.Wrap(err, "failed to GetRestaurantByID").Error()
 		h.Logger.Error(err)
 		return
 	}
@@ -111,10 +111,10 @@ func (h *Handler) UpdateRestaurant(c *gin.Context) {
 	id := c.Param("restaurant_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
+		err := errors.Wrap(err, "invalid restaurant id").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid restaurant id").Error()})
+			gin.H{"error": err})
 
-		err := errors.Wrap(err, "failed to data").Error()
 		h.Logger.Error(err)
 		return
 	}
@@ -122,10 +122,10 @@ func (h *Handler) UpdateRestaurant(c *gin.Context) {
 	var rest pb.RestaurantInfo
 	err = c.ShouldBind(&rest)
 	if err != nil {
+		err := errors.Wrap(err, "invalid data").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid data").Error()})
+			gin.H{"error": err})
 
-		err := errors.Wrap(err, "failed to data").Error()
 		h.Logger.Error(err)
 		return
 	}
@@ -136,10 +136,10 @@ func (h *Handler) UpdateRestaurant(c *gin.Context) {
 
 	_, err = h.RestaurantClient.UpdateRestaurant(ctx, &rest)
 	if err != nil {
+		err := errors.Wrap(err, "error updating restaurant").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error updating restaurant").Error()})
+			gin.H{"error": err})
 
-		err := errors.Wrap(err, "failed to UpdateRestaurant").Error()
 		h.Logger.Error(err)
 		return
 	}
@@ -163,10 +163,10 @@ func (h *Handler) DeleteRestaurant(c *gin.Context) {
 	id := c.Param("restaurant_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
+		err := errors.Wrap(err, "invalid restaurant id").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid restaurant id").Error()})
+			gin.H{"error": err})
 
-		err := errors.Wrap(err, "failed to data").Error()
 		h.Logger.Error(err)
 		return
 	}
@@ -176,10 +176,10 @@ func (h *Handler) DeleteRestaurant(c *gin.Context) {
 
 	_, err = h.RestaurantClient.DeleteRestaurant(ctx, &pb.ID{Id: id})
 	if err != nil {
+		err := errors.Wrap(err, "error deleting restaurant").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error deleting restaurant").Error()})
+			gin.H{"error": err})
 
-		err := errors.Wrap(err, "failed to DeleteRestaurant").Error()
 		h.Logger.Error(err)
 		return
 	}
@@ -230,10 +230,10 @@ func (h *Handler) FetchRestaurants(c *gin.Context) {
 
 	rests, err := h.RestaurantClient.FetchRestaurants(ctx, &pag)
 	if err != nil {
+		err := errors.Wrap(err, "error fetching restaurants").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error fetching restaurants").Error()})
+			gin.H{"error": err})
 
-		err := errors.Wrap(err, "failed to FetchRestaurants").Error()
 		h.Logger.Error(err)
 		return
 	}

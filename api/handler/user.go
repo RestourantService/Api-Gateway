@@ -28,11 +28,11 @@ func (h *Handler) GetUser(c *gin.Context) {
 	id := c.Param("user_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
+		err := errors.Wrap(err, "invalid user id").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid user id").Error()})
+			gin.H{"error": err})
 
 		log.Println(err)
-		err := errors.Wrap(err, "failed to data").Error()
 		h.Logger.Error(err)
 		return
 	}
@@ -42,11 +42,11 @@ func (h *Handler) GetUser(c *gin.Context) {
 
 	user, err := h.UserClient.GetUser(ctx, &pb.ID{Id: id})
 	if err != nil {
+		err := errors.Wrap(err, "error getting user").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error getting user").Error()})
+			gin.H{"error": err})
 
 		log.Println(err)
-		err := errors.Wrap(err, "failed to GetUser").Error()
 		h.Logger.Error(err)
 		return
 	}
@@ -73,11 +73,11 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 	id := c.Param("user_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
+		err := errors.Wrap(err, "invalid user id").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid user id").Error()})
+			gin.H{"error": err})
 
 		log.Println(err)
-		err := errors.Wrap(err, "failed to data").Error()
 		h.Logger.Error(err)
 		return
 	}
@@ -85,11 +85,11 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 	var user pb.UserInfo
 	err = c.ShouldBind(&user)
 	if err != nil {
+		err := errors.Wrap(err, "invalid data").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid data").Error()})
+			gin.H{"error": err})
 
 		log.Println(err)
-		err := errors.Wrap(err, "failed to data").Error()
 		h.Logger.Error(err)
 		return
 	}
@@ -100,11 +100,11 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 
 	_, err = h.UserClient.UpdateUser(ctx, &user)
 	if err != nil {
+		err := errors.Wrap(err, "error updating user").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error updating user").Error()})
+			gin.H{"error": err})
 
 		log.Println(err)
-		err := errors.Wrap(err, "failed to UpdateUser").Error()
 		h.Logger.Error(err)
 		return
 	}
@@ -127,11 +127,11 @@ func (h *Handler) DeleteUser(c *gin.Context) {
 	id := c.Param("user_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
+		err := errors.Wrap(err, "invalid user id").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid user id").Error()})
+			gin.H{"error": err})
 
 		log.Println(err)
-		err := errors.Wrap(err, "failed to data").Error()
 		h.Logger.Error(err)
 		return
 	}
@@ -141,11 +141,11 @@ func (h *Handler) DeleteUser(c *gin.Context) {
 
 	_, err = h.UserClient.DeleteUser(ctx, &pb.ID{Id: id})
 	if err != nil {
+		err := errors.Wrap(err, "failed to DeleteUser").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error deleting user").Error()})
+			gin.H{"error": err})
 
 		log.Println(err)
-		err := errors.Wrap(err, "failed to DeleteUser").Error()
 		h.Logger.Error(err)
 		return
 	}

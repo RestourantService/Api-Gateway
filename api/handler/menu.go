@@ -28,11 +28,11 @@ func (h *Handler) AddMeal(c *gin.Context) {
 	var meal pb.MealDetails
 	err := c.ShouldBind(&meal)
 	if err != nil {
+		err := errors.Wrap(err, "invalid data").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-		gin.H{"error": errors.Wrap(err, "invalid data").Error()})
+			gin.H{"error": err})
 
-		err := errors.Wrap(err, "failed to data")
-		h.Logger.Error(err.Error())
+		h.Logger.Error(err)
 		return
 	}
 
@@ -41,11 +41,11 @@ func (h *Handler) AddMeal(c *gin.Context) {
 
 	id, err := h.MenuClient.AddMeal(ctx, &meal)
 	if err != nil {
+		err := errors.Wrap(err, "error adding meal to menu").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error adding meal to menu").Error()})
+			gin.H{"error": err})
 
-		err := errors.Wrap(err, "failed to AddMeal Menu")
-		h.Logger.Error(err.Error())
+		h.Logger.Error(err)
 		return
 	}
 
@@ -68,11 +68,11 @@ func (h *Handler) GetMealByID(c *gin.Context) {
 	id := c.Param("meal_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
+		err := errors.Wrap(err, "invalid meal id").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid meal id").Error()})
-			
-		err := errors.Wrap(err, "failed to data")
-		h.Logger.Error(err.Error())
+			gin.H{"error": err})
+
+		h.Logger.Error(err)
 		return
 	}
 
@@ -81,11 +81,11 @@ func (h *Handler) GetMealByID(c *gin.Context) {
 
 	meal, err := h.MenuClient.GetMealByID(ctx, &pb.ID{Id: id})
 	if err != nil {
+		err := errors.Wrap(err, "error getting meal from menu").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error getting meal from menu").Error()})
-		
-		err := errors.Wrap(err, "failed to AddMeal Menu")
-		h.Logger.Error(err.Error())
+			gin.H{"error": err})
+
+		h.Logger.Error(err)
 		return
 	}
 
@@ -111,19 +111,22 @@ func (h *Handler) UpdateMeal(c *gin.Context) {
 	id := c.Param("meal_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
+		err := errors.Wrap(err, "invalid meal id").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid meal id").Error()})
-				
-		err := errors.Wrap(err, "failed to data")
-		h.Logger.Error(err.Error())
+			gin.H{"error": err})
+
+		h.Logger.Error(err)
 		return
 	}
 
 	var meal pb.MealInfo
 	err = c.ShouldBind(&meal)
 	if err != nil {
+		err := errors.Wrap(err, "invalid data").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid data").Error()})
+			gin.H{"error": err})
+
+		h.Logger.Error(err)
 		log.Println(err)
 		return
 	}
@@ -134,11 +137,11 @@ func (h *Handler) UpdateMeal(c *gin.Context) {
 
 	_, err = h.MenuClient.UpdateMeal(ctx, &meal)
 	if err != nil {
+		err := errors.Wrap(err, "error updating meal in menu").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error updating meal in menu").Error()})
-		
-		err := errors.Wrap(err, "failed to AddMeal Menu")
-		h.Logger.Error(err.Error())
+			gin.H{"error": err})
+
+		h.Logger.Error(err)
 		return
 	}
 
@@ -161,11 +164,11 @@ func (h *Handler) DeleteMeal(c *gin.Context) {
 	id := c.Param("meal_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
+		err := errors.Wrap(err, "invalid meal id").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid meal id").Error()})
-			
-		err := errors.Wrap(err, "failed to data")
-		h.Logger.Error(err.Error())
+			gin.H{"error": err})
+
+		h.Logger.Error(err)
 		return
 	}
 
@@ -174,11 +177,11 @@ func (h *Handler) DeleteMeal(c *gin.Context) {
 
 	_, err = h.MenuClient.DeleteMeal(ctx, &pb.ID{Id: id})
 	if err != nil {
+		err := errors.Wrap(err, "error removing meal from menu").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error removing meal from menu").Error()})
-		
-		err := errors.Wrap(err, "failed to AddMeal Menu")
-		h.Logger.Error(err.Error())
+			gin.H{"error": err})
+
+		h.Logger.Error(err)
 		return
 	}
 
@@ -233,11 +236,11 @@ func (h *Handler) FetchMeals(c *gin.Context) {
 
 	meals, err := h.MenuClient.FetchMeals(ctx, &filter)
 	if err != nil {
+		err := errors.Wrap(err, "error fetching meals from menu").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error fetching meals from menu").Error()})
-		
-		err := errors.Wrap(err, "failed to AddMeal Menu")
-		h.Logger.Error(err.Error())
+			gin.H{"error": err})
+
+		h.Logger.Error(err)
 		return
 	}
 

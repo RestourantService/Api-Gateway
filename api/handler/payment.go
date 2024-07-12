@@ -27,11 +27,11 @@ func (h *Handler) CreatePayment(c *gin.Context) {
 	var pay pb.PaymentDetails
 	err := c.ShouldBind(&pay)
 	if err != nil {
+		err := errors.Wrap(err, "invalid data").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid data").Error()})
+			gin.H{"error": err})
 		
-		err := errors.Wrap(err, "failed to data")
-		h.Logger.Error(err.Error())
+		h.Logger.Error(err)
 		return
 	}
 
@@ -40,11 +40,11 @@ func (h *Handler) CreatePayment(c *gin.Context) {
 
 	status, err := h.PaymentClient.CreatePayment(ctx, &pay)
 	if err != nil {
+		err := errors.Wrap(err, "error creating payment").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error creating payment").Error()})
+			gin.H{"error": err})
 		
-		err := errors.Wrap(err, "failed to AddPayment")
-		h.Logger.Error(err.Error())
+		h.Logger.Error(err)
 		return
 	}
 
@@ -67,11 +67,11 @@ func (h *Handler) GetPayment(c *gin.Context) {
 	id := c.Param("payment_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
+		err := errors.Wrap(err, "invalid payment id").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid payment id").Error()})
+			gin.H{"error": err})
 		
-		err := errors.Wrap(err, "failed to data")
-		h.Logger.Error(err.Error())
+		h.Logger.Error(err)
 		return
 	}
 
@@ -80,11 +80,11 @@ func (h *Handler) GetPayment(c *gin.Context) {
 
 	pay, err := h.PaymentClient.GetPayment(ctx, &pb.ID{Id: id})
 	if err != nil {
+		err := errors.Wrap(err, "error getting payment").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error getting payment").Error()})
+			gin.H{"error": err})
 		
-		err := errors.Wrap(err, "failed to GetPayment")
-		h.Logger.Error(err.Error())
+		h.Logger.Error(err)
 		return
 	}
 
@@ -110,19 +110,22 @@ func (h *Handler) UpdatePayment(c *gin.Context) {
 	id := c.Param("payment_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
+		err := errors.Wrap(err, "invalid payment id").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid payment id").Error()})
+			gin.H{"error": err})
 		
-		err := errors.Wrap(err, "failed to data")
-		h.Logger.Error(err.Error())
+		h.Logger.Error(err)
 		return
 	}
 
 	var pay pb.PaymentInfo
 	err = c.ShouldBind(&pay)
 	if err != nil {
+		err := errors.Wrap(err, "invalid data").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid data").Error()})
+			gin.H{"error": err})
+
+		h.Logger.Error(err)
 		log.Println(err)
 		return
 	}
@@ -133,11 +136,11 @@ func (h *Handler) UpdatePayment(c *gin.Context) {
 
 	_, err = h.PaymentClient.UpdatePayment(ctx, &pay)
 	if err != nil {
+		err := errors.Wrap(err, "error updating payment").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error updating payment").Error()})
+			gin.H{"error": err})
 		
-		err := errors.Wrap(err, "error updating payment")
-		h.Logger.Error(err.Error())
+		h.Logger.Error(err)
 		return
 	}
 

@@ -28,11 +28,11 @@ func (h *Handler) CreateReservation(c *gin.Context) {
 	var res pb.ReservationDetails
 	err := c.ShouldBind(&res)
 	if err != nil {
+		err := errors.Wrap(err, "invalid data").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid data").Error()})
-		
-		err := errors.Wrap(err, "failed to data")
-		h.Logger.Error(err.Error())
+			gin.H{"error": err})
+
+		h.Logger.Error(err)
 		return
 	}
 
@@ -41,11 +41,11 @@ func (h *Handler) CreateReservation(c *gin.Context) {
 
 	id, err := h.ReservationClient.CreateReservation(ctx, &res)
 	if err != nil {
+		err := errors.Wrap(err, "error creating reservation").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error creating reservation").Error()})
-		
-		err := errors.Wrap(err, "error creating reservation")
-		h.Logger.Error(err.Error())
+			gin.H{"error": err})
+
+		h.Logger.Error(err)
 		return
 	}
 
@@ -68,11 +68,11 @@ func (h *Handler) GetReservationByID(c *gin.Context) {
 	id := c.Param("reservation_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
+		err := errors.Wrap(err, "invalid data").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid reservation id").Error()})
-		
-		err := errors.Wrap(err, "failed to data")
-		h.Logger.Error(err.Error())
+			gin.H{"error": err})
+
+		h.Logger.Error(err)
 		return
 	}
 
@@ -81,11 +81,11 @@ func (h *Handler) GetReservationByID(c *gin.Context) {
 
 	res, err := h.ReservationClient.GetReservationByID(ctx, &pb.ID{Id: id})
 	if err != nil {
+		err := errors.Wrap(err, "failed to geting reservation by id").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error getting reservation").Error()})
-		
-		err := errors.Wrap(err, "failed to GetReservationByID")
-		h.Logger.Error(err.Error())
+			gin.H{"error": err})
+
+		h.Logger.Error(err)
 		return
 	}
 
@@ -107,12 +107,13 @@ func (h *Handler) GetReservationByID(c *gin.Context) {
 // @Router /reservation-system/reservations/{reservation_id} [put]
 func (h *Handler) UpdateReservation(c *gin.Context) {
 	h.Logger.Info("UpdateReservation method is starting")
-	
+
 	id := c.Param("reservation_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
+		err := errors.Wrap(err, "invalid reservation id").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid reservation id").Error()})
+			gin.H{"error": err})
 		log.Println(err)
 		return
 	}
@@ -120,8 +121,11 @@ func (h *Handler) UpdateReservation(c *gin.Context) {
 	var res pb.ReservationInfo
 	err = c.ShouldBind(&res)
 	if err != nil {
+		err := errors.Wrap(err, "invalid data").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid data").Error()})
+			gin.H{"error": err})
+
+		h.Logger.Error(err)
 		log.Println(err)
 		return
 	}
@@ -132,10 +136,10 @@ func (h *Handler) UpdateReservation(c *gin.Context) {
 
 	_, err = h.ReservationClient.UpdateReservation(ctx, &res)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error updating reservation").Error()})
-		
 		err := errors.Wrap(err, "failed to updating reservation").Error()
+		c.AbortWithStatusJSON(http.StatusInternalServerError,
+			gin.H{"error": err})
+
 		h.Logger.Error(err)
 		return
 	}
@@ -159,10 +163,10 @@ func (h *Handler) DeleteReservation(c *gin.Context) {
 	id := c.Param("reservation_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
+		err := errors.Wrap(err, "invalid reservation_id").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid reservation id").Error()})
-		
-		err := errors.Wrap(err, "failed to data").Error()
+			gin.H{"error": err})
+
 		h.Logger.Error(err)
 		return
 	}
@@ -172,10 +176,10 @@ func (h *Handler) DeleteReservation(c *gin.Context) {
 
 	_, err = h.ReservationClient.DeleteReservation(ctx, &pb.ID{Id: id})
 	if err != nil {
+		err := errors.Wrap(err, "failed to Delete reservation").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error deleting reservation").Error()})
-		
-		err := errors.Wrap(err, "failed to DeleteReservation").Error()
+			gin.H{"error": err})
+
 		h.Logger.Error(err)
 		return
 	}
@@ -199,10 +203,10 @@ func (h *Handler) ValidateReservation(c *gin.Context) {
 	id := c.Param("reservation_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
+		err := errors.Wrap(err, "invalid reservation_id").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid reservation id").Error()})
-		
-		err := errors.Wrap(err, "failed to data").Error()
+			gin.H{"error": err})
+
 		h.Logger.Error(err)
 		return
 	}
@@ -212,10 +216,10 @@ func (h *Handler) ValidateReservation(c *gin.Context) {
 
 	status, err := h.ReservationClient.ValidateReservation(ctx, &pb.ID{Id: id})
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error checking reservation").Error()})
-		
 		err := errors.Wrap(err, "failed to ValidateReservation").Error()
+		c.AbortWithStatusJSON(http.StatusInternalServerError,
+			gin.H{"error": err})
+
 		h.Logger.Error(err)
 		return
 	}
@@ -240,10 +244,10 @@ func (h *Handler) Order(c *gin.Context) {
 	id := c.Param("reservation_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
+		err := errors.Wrap(err, "invalid reservation_id").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid reservation id").Error()})
-		
-		err := errors.Wrap(err, "failed to data").Error()
+			gin.H{"error": err})
+
 		h.Logger.Error(err)
 		return
 	}
@@ -251,10 +255,10 @@ func (h *Handler) Order(c *gin.Context) {
 	var resOrd pb.ReservationOrders
 	err = c.ShouldBind(&resOrd)
 	if err != nil {
+		err := errors.Wrap(err, "invalid data").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid data").Error()})
-		
-		err := errors.Wrap(err, "failed to data").Error()
+			gin.H{"error": err})
+
 		h.Logger.Error(err)
 		return
 	}
@@ -265,10 +269,10 @@ func (h *Handler) Order(c *gin.Context) {
 
 	ordID, err := h.ReservationClient.Order(ctx, &resOrd)
 	if err != nil {
+		err := errors.Wrap(err, "error ordering").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error ordering").Error()})
-		
-		err := errors.Wrap(err, "failed to Pay").Error()
+			gin.H{"error": err})
+
 		h.Logger.Error(err)
 		return
 	}
@@ -292,10 +296,10 @@ func (h *Handler) Pay(c *gin.Context) {
 	id := c.Param("reservation_id")
 	_, err := uuid.Parse(id)
 	if err != nil {
+		err := errors.Wrap(err, "invalid reservation_id").Error()
 		c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"error": errors.Wrap(err, "invalid reservation id").Error()})
-		
-        err := errors.Wrap(err, "failed to data").Error()
+			gin.H{"error": err})
+
 		h.Logger.Error(err)
 		return
 	}
@@ -305,10 +309,10 @@ func (h *Handler) Pay(c *gin.Context) {
 
 	status, err := h.ReservationClient.Pay(ctx, &pb.ID{Id: id})
 	if err != nil {
+		err := errors.Wrap(err, "error making a payment").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error making a payment").Error()})
-	
-		err := errors.Wrap(err, "failed to Pay").Error()
+			gin.H{"error": err})
+
 		h.Logger.Error(err)
 		return
 	}
@@ -366,10 +370,10 @@ func (h *Handler) FetchReservations(c *gin.Context) {
 
 	resers, err := h.ReservationClient.FetchReservations(ctx, &filter)
 	if err != nil {
+		err := errors.Wrap(err, "error fetching reservations").Error()
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"error": errors.Wrap(err, "error fetching reservations").Error()})
-		
-		err := errors.Wrap(err, "failed to FetchReservations").Error()
+			gin.H{"error": err})
+			
 		h.Logger.Error(err)
 		return
 	}
